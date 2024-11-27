@@ -5,6 +5,7 @@ const transactionRoutes = require('./routes/transactionRoutes');
 const budgetSimulationRoutes = require('./routes/budgetSimulationRoutes');
 const authRoutes = require('./routes/authRoutes');
 const path = require('path');
+const dashboardRoutes = require('./routes/dashboardRoutes');
 
 const app = express();
 
@@ -19,6 +20,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/transactions', transactionRoutes);
 app.use('/api/budget-simulations', budgetSimulationRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/dashboard', dashboardRoutes);
 
 
 sequelize.authenticate()
