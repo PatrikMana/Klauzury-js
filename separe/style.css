@@ -1,0 +1,150 @@
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Global styles */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #e5e5e5;
+  display: flex;
+  height: 100vh;
+}
+
+.container {
+  display: flex;
+  width: 100%;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 250px;
+  background-color: #000;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 20px;
+}
+
+.sidebar .logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.sidebar nav ul {
+  list-style: none;
+}
+
+.sidebar nav ul li {
+  padding: 10px 15px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.sidebar nav ul li.active {
+  background-color: #fbc02d;
+  color: #000;
+  font-weight: bold;
+}
+
+.sidebar nav ul li:hover {
+  background-color: #555;
+}
+
+.sidebar .user {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+}
+
+.sidebar .user img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.sidebar .user div {
+  font-size: 0.9rem;
+}
+
+.sidebar .user a {
+  color: #fbc02d;
+  font-size: 0.8rem;
+  text-decoration: none;
+}
+
+/* Main content */
+main {
+  flex-grow: 1;
+  padding: 20px;
+}
+
+.dashboard-container {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.balance,
+.monthly-summary,
+.alerts {
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  flex: 1;
+  min-width: 300px;
+}
+
+.balance h3,
+.monthly-summary h3,
+.alerts h3 {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+}
+
+.balance .amount,
+.monthly-summary .amount {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.progress-bar {
+  background: #e0e0e0;
+  height: 10px;
+  border-radius: 5px;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.progress-bar .progress {
+  height: 100%;
+  border-radius: 5px;
+}
+
+.progress-bar .progress.yellow {
+  background: #fbc02d;
+}
+
+.progress-bar .progress.black {
+  background: #000;
+}
+
+.alerts ul {
+  list-style: none;
+  padding-left: 20px;
+}
+
+.alerts ul li {
+  font-size: 0.9rem;
+  color: #666;
+}
