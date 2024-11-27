@@ -6,14 +6,12 @@ async function loadDashboard() {
     }
   
     try {
-      // Získání zůstatku
       const balanceResponse = await fetch('/api/dashboard/balance', {
         headers: { Authorization: `Bearer ${token}` },
       });
       const balanceData = await balanceResponse.json();
       document.getElementById('balance').textContent = `${balanceData.balance} Kč`;
   
-      // Získání měsíčního přehledu
       const summaryResponse = await fetch('/api/dashboard/summary', {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -21,7 +19,6 @@ async function loadDashboard() {
       document.getElementById('income').textContent = `Příjmy: ${summaryData.income} Kč`;
       document.getElementById('expenses').textContent = `Výdaje: ${summaryData.expenses} Kč`;
   
-      // Získání upozornění
       const alertsResponse = await fetch('/api/dashboard/alerts', {
         headers: { Authorization: `Bearer ${token}` },
       });

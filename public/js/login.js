@@ -19,7 +19,7 @@ document.getElementById('loginForm').addEventListener('submit', async function (
       if (response.ok) {
         const data = await response.json();
         localStorage.setItem('authToken', data.token);
-        window.location.href = '/dashboard';
+        window.location.href = '/dashboard.html';
       } else {
         const errorData = await response.json();
         errorMessage.textContent = errorData.message || 'Přihlášení selhalo.';
