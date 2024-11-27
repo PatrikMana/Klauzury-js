@@ -45,7 +45,7 @@ document.getElementById('loginForm').addEventListener('submit', async function (
     });
 
     if (response.ok) {
-      window.location.href = '/dashboard';
+      window.location.href = '/dashboard.html';
     } else {
       console.error('Token je neplatný nebo vypršel.');
       localStorage.removeItem('authToken');
