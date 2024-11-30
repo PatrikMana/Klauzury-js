@@ -2,12 +2,14 @@ const Transaction = require('../models/Transaction');
 
 exports.getBalance = async (req, res) => {
   try {
-    const transactions = await Transaction.findAll({ where: { userId: req.user.id } });
-    const balance = transactions.reduce((sum, t) => sum + t.amount, 0);
-    res.status(200).json({ balance });
+    if (!req.user) {
+      return res.status(401).json({ message: 'Uživatel není ověřen.' });
+    }
+
+    res.status(200).json({ accountBalance: req.user.accountBalance });
   } catch (error) {
-    console.error('Chyba při získávání zůstatku:', error);
-    res.status(500).json({ message: 'Chyba při získávání zůstatku.' });
+    console.error('Chyba při načítání zůstatku uživatele:', error);
+    res.status(500).json({ message: 'Chyba serveru.' });
   }
 };
 

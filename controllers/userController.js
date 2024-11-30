@@ -47,3 +47,16 @@ exports.loginUser = async (req, res) => {
     res.status(500).json({ message: 'Chyba serveru.' });
   }
 };
+
+exports.getUserBalance = async (req, res) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({ message: 'Uživatel není ověřen.' });
+    }
+
+    res.status(200).json({ accountBalance: req.user.accountBalance });
+  } catch (error) {
+    console.error('Chyba při načítání zůstatku uživatele:', error);
+    res.status(500).json({ message: 'Chyba serveru.' });
+  }
+};

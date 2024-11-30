@@ -213,7 +213,7 @@ h2 {
 }
 
 /* Text styly */
-.balance-amount {
+#balance-amount {
     font-size: var(--font-size-2xl);
     font-weight: bold;
     margin: 10px 0;

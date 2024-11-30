@@ -1,38 +1,45 @@
-async function loadDashboard() {
-    const token = localStorage.getItem('authToken');
+document.addEventListener('DOMContentLoaded', async () => {
+  async function loadUserBalance() {
+    const token = localStorage.getItem('token');
+
     if (!token) {
-      window.location.href = '/login.html';
+      redirectToLogin();
       return;
     }
-  
+
     try {
-      const balanceResponse = await fetch('/api/dashboard/balance', {
-        headers: { Authorization: `Bearer ${token}` },
+      const response = await fetch('/api/users/verify', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
       });
-      const balanceData = await balanceResponse.json();
-      document.getElementById('balance').textContent = `${balanceData.balance} Kč`;
-  
-      const summaryResponse = await fetch('/api/dashboard/summary', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const summaryData = await summaryResponse.json();
-      document.getElementById('income').textContent = `Příjmy: ${summaryData.income} Kč`;
-      document.getElementById('expenses').textContent = `Výdaje: ${summaryData.expenses} Kč`;
-  
-      const alertsResponse = await fetch('/api/dashboard/alerts', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const alertsData = await alertsResponse.json();
-      const alertsList = document.getElementById('alerts');
-      alertsList.innerHTML = '';
-      alertsData.forEach(alert => {
-        const li = document.createElement('li');
-        li.textContent = alert.message;
-        alertsList.appendChild(li);
-      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const balanceElement = document.getElementById('user-balance');
+        if (balanceElement) {
+          balanceElement.textContent = `${data.accountBalance} Kč`;
+        } else {
+          console.error('Element s ID "user-balance" nebyl nalezen.');
+        }
+      } else if (response.status === 401) {
+        console.warn('Token je neplatný nebo vypršel.');
+        redirectToLogin();
+      } else {
+        console.error('Nepodařilo se načíst kapitál uživatele:', await response.text());
+      }
     } catch (error) {
-      console.error('Chyba při načítání dashboardu:', error);
+      console.error('Chyba při načítání zůstatku uživatele:', error);
+      redirectToLogin();
     }
   }
-  
-  loadDashboard();  
+
+  function redirectToLogin() {
+    localStorage.removeItem('token');
+    window.location.href = '/login';
+  }
+
+  await loadUserBalance();
+});
