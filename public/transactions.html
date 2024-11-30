@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Příjmy a výdaje | Finance Helper</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="logo">
+                <img src="placeholder-logo.png" alt="Finance Helper Logo">
+                <h1>Finance helper</h1>
+            </div>
+            
+            <nav class="navigation">
+                <ul>
+                    <li>
+                        <a href="dashboard.html">
+                            <i class="fas fa-chart-line"></i>
+                            Přehled
+                        </a>
+                    </li>
+                    <li class="active">
+                        <a href="transactions.html">
+                            <i class="fas fa-wallet"></i>
+                            Příjmy a výdaje
+                        </a>
+                    </li>
+                    <li>
+                        <a href="simulator.html">
+                            <i class="fas fa-calculator"></i>
+                            Simulátor rozpočtu
+                        </a>
+                    </li>
+                    <li>
+                        <a href="mortgage.html">
+                            <i class="fas fa-home"></i>
+                            Hypotéky
+                        </a>
+                    </li>
+                    <li>
+                        <a href="goals.html">
+                            <i class="fas fa-bullseye"></i>
+                            Cíle
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="user-profile">
+                <img src="placeholder-avatar.png" alt="User avatar">
+                <div class="user-info">
+                    <span class="user-name">Pepa Novotný</span>
+                    <a href="#" class="logout">odhlásit se</a>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="transactions-container">
+                <div class="monthly-summary">
+                    <h2>Tento měsíc:</h2>
+                    <div class="summary-amounts">
+                        <span class="income">26 000 Kč</span>
+                        <span class="expenses">14 000 Kč</span>
+                    </div>
+                    <div class="summary-bar">
+                        <div class="income-bar" style="width: 65%"></div>
+                        <div class="expenses-bar" style="width: 35%"></div>
+                    </div>
+                    <div class="total-amount">+ 12 000 Kč</div>
+                </div>
+
+                <div class="transactions-list">
+                    <h2>Nedávné transakce:</h2>
+                    <table class="transactions-table">
+                        <tbody>
+                            <tr>
+                                <td>Nájem</td>
+                                <td>4. 11. 2024</td>
+                                <td>pravidelné</td>
+                                <td class="amount negative">- 6 000 Kč</td>
+                            </tr>
+                            <tr>
+                                <td>Něco</td>
+                                <td>4. 11. 2024</td>
+                                <td>nepravidelné</td>
+                                <td class="amount positive">+ 1 000 Kč</td>
+                            </tr>
+                            <tr>
+                                <td>Něco</td>
+                                <td>4. 11. 2024</td>
+                                <td>pravidelné</td>
+                                <td class="amount positive">+ 1 000 Kč</td>
+                            </tr>
+                            <tr>
+                                <td>Něco</td>
+                                <td>4. 11. 2024</td>
+                                <td>nepravidelné</td>
+                                <td class="amount positive">+ 1 000 Kč</td>
+                            </tr>
+                            <tr>
+                                <td>Něco</td>
+                                <td>4. 11. 2024</td>
+                                <td>pravidelné</td>
+                                <td class="amount negative">- 500 Kč</td>
+                            </tr>
+                            <tr>
+                                <td>Něco</td>
+                                <td>4. 11. 2024</td>
+                                <td>nepravidelné</td>
+                                <td class="amount positive">+100 Kč</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="show-more">
+                        <a href="#">Zobrazit další</a>
+                    </div>
+                    <button class="add-transaction">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

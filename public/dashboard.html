@@ -1,29 +1,96 @@
 <!DOCTYPE html>
 <html lang="cs">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Finance Helper</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-  <div class="dashboard-container">
-    <h1>Dashboard</h1>
-    <div class="balance">
-      <h2>Celkový zůstatek</h2>
-      <p id="balance">Načítám...</p>
-    </div>
-    <div class="summary">
-      <h2>Měsíční přehled</h2>
-      <p id="income">Příjmy: Načítám...</p>
-      <p id="expenses">Výdaje: Načítám...</p>
-    </div>
-    <div class="alerts">
-      <h2>Upozornění</h2>
-      <ul id="alerts">Načítám...</ul>
-    </div>
-  </div>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="logo">
+                <img src="placeholder-logo.png" alt="Finance Helper Logo">
+                <h1>Finance helper</h1>
+            </div>
+            
+            <nav class="navigation">
+                <ul>
+                    <li class="active">
+                        <a href="dashboard.html">
+                            <i class="fas fa-chart-line"></i>
+                            Přehled
+                        </a>
+                    </li>
+                    <li>
+                        <a href="transactions.html">
+                            <i class="fas fa-wallet"></i>
+                            Příjmy a výdaje
+                        </a>
+                    </li>
+                    <li>
+                        <a href="simulator.html">
+                            <i class="fas fa-calculator"></i>
+                            Simulátor rozpočtu
+                        </a>
+                    </li>
+                    <li>
+                        <a href="mortgage.html">
+                            <i class="fas fa-home"></i>
+                            Hypotéky
+                        </a>
+                    </li>
+                    <li>
+                        <a href="goals.html">
+                            <i class="fas fa-bullseye"></i>
+                            Cíle
+                        </a>
+                    </li>
+                </ul>
+            </nav>
 
-  <script src="/js/dashboard.js"></script>
+            <div class="user-profile">
+                <img src="placeholder-avatar.png" alt="User avatar">
+                <div class="user-info">
+                    <span class="user-name">Pepa Novotný</span>
+                    <a href="#" class="logout">odhlásit se</a>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="dashboard-grid">
+                <div class="balance-box">
+                    <h2>Aktuální zůstatek:</h2>
+                    <div class="balance-amount">100 000 Kč</div>
+                    <div class="progress-bar">
+                        <div class="progress" style="width: 50%"></div>
+                        <span class="progress-text">NA</span>
+                    </div>
+                    <div class="balance-goal">Cíl: 200 000 Kč</div>
+                </div>
+
+                <div class="notifications-box">
+                    <h2>Upozornění:</h2>
+                    <ul>
+                        <li>nemáte žádné upozornění</li>
+                    </ul>
+                </div>
+
+                <div class="last-month-box">
+                    <h2>Minulý měsíc:</h2>
+                    <div class="month-amount">+12 000 Kč</div>
+                    <div class="progress-bar-split">
+                        <div class="progress-positive" style="width: 65%"></div>
+                        <div class="progress-negative" style="width: 35%"></div>
+                        <span class="progress-text">NA</span>
+                    </div>
+                    <p class="month-info">Za minulý měsíc jste 12 000 Kč v plusu, jen tak dál!</p>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="/js/dashboard.js"></script>
 </body>
 </html>
