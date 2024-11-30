@@ -36,4 +36,6 @@ function redirectToLogin() {
   window.location.href = '/login.html';
 }
 
+document.getElementById('logout').addEventListener('click', () => redirectToLogin());
+
 loadUserBalance();

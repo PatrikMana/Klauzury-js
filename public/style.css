@@ -125,7 +125,7 @@ body {
     color: var(--color-text);
 }
 
-.logout {
+#logout {
     color: var(--color-text-light);
     text-decoration: none;
     font-size: var(--font-size-xs);
