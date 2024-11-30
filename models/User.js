@@ -20,6 +20,10 @@ const User = sequelize.define('User', {
     type: DataTypes.DATE,
     allowNull: false,
   },
+  accountBalance: {
+    type: DataTypes.FLOAT,
+    defaultValue: 0.0,
+  },
 });
 
 module.exports = User;

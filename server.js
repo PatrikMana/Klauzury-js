@@ -22,13 +22,12 @@ app.use('/api/budget-simulations', budgetSimulationRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 
-
 sequelize.authenticate()
   .then(() => console.log('Připojení k databázi bylo úspěšné!'))
   .catch(error => console.error('Připojení k databázi selhalo:', error));
 
 sequelize.sync().then(() => {
   app.listen(3000, () => {
-    console.log('Server běží na http://localhost:3000');
+    console.log('http://localhost:3000');
   });
 });
