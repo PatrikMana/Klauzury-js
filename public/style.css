@@ -359,6 +359,133 @@ h2 {
     font-size: 20px;
 }
 
+/* Styly pro stránku výběru akce */
+.action-container {
+    max-width: 400px;
+    margin: 100px auto;
+    padding: 30px;
+    background-color: var(--color-white);
+    border-radius: 15px;
+    box-shadow: 0 2px 4px var(--color-shadow);
+    text-align: center;
+}
+
+.action-container h1 {
+    font-size: var(--font-size-2xl);
+    color: var(--color-text);
+    margin-bottom: 20px;
+}
+
+.action-container p {
+    font-size: var(--font-size-base);
+    color: var(--color-text-light);
+    margin-bottom: 30px;
+}
+
+.action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.action-buttons a {
+    display: inline-block;
+    padding: 12px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: var(--font-size-base);
+    font-weight: bold;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+#loginButton {
+    background-color: var(--color-primary);
+    color: var(--color-secondary);
+}
+
+#registerButton {
+    background-color: var(--color-secondary);
+    color: var(--color-white);
+}
+
+.action-buttons a:hover {
+    transform: translateY(-2px);
+}
+
+#loginButton:hover {
+    background-color: #e6c200; /* Tmavší odstín var(--color-primary) */
+}
+
+#registerButton:hover {
+    background-color: #333333; /* Světlejší odstín var(--color-secondary) */
+}
+
+/* Styly pro přihlašovací a registrační formulář */
+.auth-container {
+    max-width: 400px;
+    margin: 100px auto;
+    padding: 30px;
+    background-color: var(--color-white);
+    border-radius: 15px;
+    box-shadow: 0 2px 4px var(--color-shadow);
+}
+
+.auth-container h1 {
+    font-size: var(--font-size-2xl);
+    color: var(--color-text);
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    font-size: var(--font-size-sm);
+    color: var(--color-text-light);
+    margin-bottom: 5px;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 10px;
+    font-size: var(--font-size-base);
+    border: 1px solid var(--color-border);
+    border-radius: 5px;
+    transition: border-color 0.3s;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+}
+
+button[type="submit"] {
+    width: 100%;
+    padding: 12px;
+    background-color: var(--color-primary);
+    color: var(--color-secondary);
+    border: none;
+    border-radius: 5px;
+    font-size: var(--font-size-base);
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button[type="submit"]:hover {
+    background-color: #e6c200; /* Tmavší odstín var(--color-primary) */
+}
+
+.error-message {
+    color: #D32F2F;
+    font-size: var(--font-size-sm);
+    margin-top: 10px;
+    text-align: center;
+}
+
 /* Responzivní design */
 @media (max-width: 768px) {
     .container {
@@ -388,6 +515,34 @@ h2 {
     
     .transactions-table {
         font-size: var(--font-size-sm);
+    }
+}
+
+@media (max-width: 480px) {
+    .action-container {
+        margin: 50px auto;
+        padding: 20px;
+    }
+
+    .action-container h1 {
+        font-size: var(--font-size-xl);
+    }
+
+    .action-buttons a {
+        padding: 10px 15px;
+    }
+    .auth-container {
+        margin: 50px auto;
+        padding: 20px;
+    }
+
+    .auth-container h1 {
+        font-size: var(--font-size-xl);
+    }
+
+    .form-group input,
+    button[type="submit"] {
+        padding: 10px;
     }
 }
 

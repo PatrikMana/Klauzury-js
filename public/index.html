@@ -4,26 +4,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Vyberte akci</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="action-container">
     <h1>Vítejte!</h1>
     <p>Vyberte, co chcete udělat:</p>
     <div class="action-buttons">
-      <button id="loginButton">Přihlásit se</button>
-      <button id="registerButton">Registrovat se</button>
+      <a href="login.html" id="loginButton">Přihlásit se</a>
+      <a href="register.html" id="registerButton">Registrovat se</a>
     </div>
   </div>
-
-  <script>
-    document.getElementById('loginButton').addEventListener('click', () => {
-      window.location.href = '/login.html';
-    });
-
-    document.getElementById('registerButton').addEventListener('click', () => {
-      window.location.href = '/register.html';
-    });
-  </script>
 </body>
 </html>
