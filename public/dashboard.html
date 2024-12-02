@@ -59,16 +59,32 @@
             </div>
         </aside>
 
+        <div class="popup-overlay" id="accountPopup" style="display: none;">
+            <div class="popup">
+                <h2>Nastavení účtu</h2>
+                <form class="popup-form" id="accountForm">
+                    <label for="accountBalance">Aktuální stav účtu:</label>
+                    <input type="number" id="accountBalance" name="accountBalance" required>
+                    
+                    <label for="accountGoal">Cílová částka:</label>
+                    <input type="number" id="accountGoal" name="accountGoal" required>
+                    
+                    <button type="submit">Uložit</button>
+                </form>
+                <button class="close-popup" id="closePopup">&times;</button>
+            </div>
+        </div>
+
         <main class="main-content">
             <div class="dashboard-grid">
                 <div class="balance-box">
                     <h2>Aktuální zůstatek:</h2>
-                    <div id="balance-amount">100 000 Kč</div>
+                    <div id="balance-amount"></div>
                     <div class="progress-bar">
                         <div class="progress" style="width: 50%"></div>
                         <span class="progress-text">NA</span>
                     </div>
-                    <div class="balance-goal">Cíl: 200 000 Kč</div>
+                    <div id="balance-goal"></div>
                 </div>
 
                 <div class="notifications-box">

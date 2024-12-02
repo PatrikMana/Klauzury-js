@@ -7,7 +7,7 @@ const User = sequelize.define('User', {
     autoIncrement: true,
     primaryKey: true,
   },
-  email: {
+  username: {
     type: DataTypes.STRING,
     allowNull: false,
     unique: true,
@@ -22,7 +22,11 @@ const User = sequelize.define('User', {
   },
   accountBalance: {
     type: DataTypes.FLOAT,
-    defaultValue: 0.0,
+    allowNull: true,
+  },
+  accountGoal: {
+    type: DataTypes.FLOAT,
+    allowNull: true,
   },
 });
 

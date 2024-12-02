@@ -1,7 +1,7 @@
 document.getElementById('loginForm').addEventListener('submit', async function (e) {
     e.preventDefault();
   
-    const email = document.getElementById('email').value;
+    const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
     const errorMessage = document.getElementById('error-message');
   
@@ -13,7 +13,7 @@ document.getElementById('loginForm').addEventListener('submit', async function (
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ username, password }),
       });
   
       if (response.ok) {
