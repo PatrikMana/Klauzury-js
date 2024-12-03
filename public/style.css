@@ -184,14 +184,16 @@ h2 {
     position: relative;
 }
 
-.progress,
+#progress,
 .progress-positive,
 .progress-negative {
     height: 100%;
     border-radius: 10px;
 }
 
-.progress {
+#progress {
+    display: flex;
+    justify-content: center;
     background-color: var(--color-primary);
 }
 
@@ -203,11 +205,7 @@ h2 {
     background-color: var(--color-secondary);
 }
 
-.progress-text {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+#progress-text {
     color: var(--color-text);
     font-weight: bold;
 }
@@ -228,6 +226,12 @@ h2 {
     text-align: right;
     color: var(--color-white);
     font-size: var(--font-size-sm);
+}
+
+.goal-div {
+    display: flex;
+    justify-content: right;
+    gap: 0.4rem;
 }
 
 .month-amount {

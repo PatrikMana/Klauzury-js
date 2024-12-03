@@ -95,3 +95,25 @@ exports.updateBalance = async (req, res) => {
     res.status(500).json({ message: 'Chyba serveru.' });
   }
 };
+
+exports.getProfile = async (req, res) => {
+  try {
+    const userId = req.user.id; // Uživatelské ID z tokenu
+    const user = await User.findByPk(userId, {
+      attributes: ['id', 'username', 'accountBalance', 'accountGoal'], // Vracíme potřebné údaje
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: 'Uživatel nenalezen.' });
+    }
+
+    res.json({
+      username: user.username,
+      accountBalance: user.accountBalance,
+      accountGoal: user.accountGoal,
+    });
+  } catch (error) {
+    console.error('Chyba při získávání profilu:', error);
+    res.status(500).json({ message: 'Chyba serveru.' });
+  }
+};

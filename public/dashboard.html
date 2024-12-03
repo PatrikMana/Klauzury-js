@@ -11,7 +11,7 @@
     <div class="container">
         <aside class="sidebar">
             <div class="logo">
-                <img src="placeholder-logo.png" alt="Finance Helper Logo">
+                <img src="assets/logo.png" alt="Finance Helper Logo">
                 <h1>Finance helper</h1>
             </div>
             
@@ -53,7 +53,7 @@
             <div class="user-profile">
                 <img src="assets/placeholder-avatar.jpg" alt="User avatar">
                 <div class="user-info">
-                    <span class="user-name">Pepa Novotný</span>
+                    <span id="username" class="user-name"></span>
                     <a href="#" id="logout">odhlásit se</a>
                 </div>
             </div>
@@ -80,11 +80,13 @@
                     <h2>Aktuální zůstatek:</h2>
                     <div id="balance-amount"></div>
                     <div class="progress-bar">
-                        <div class="progress" style="width: 50%"></div>
-                        <span class="progress-text">NA</span>
+                        <div id="progress" style="width: 50%"><span id="progress-text">NA</span>
                     </div>
-                    <div class="balance-goal-text">Váš cíl:</div>
-                    <div id="balance-goal"></div>
+                    </div>
+                    <div class="goal-div">
+                        <div class="balance-goal-text">Váš cíl:</div>
+                        <div id="balance-goal"></div>
+                    </div>
                 </div>
 
                 <div class="notifications-box">

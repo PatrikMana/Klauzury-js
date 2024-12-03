@@ -40,10 +40,74 @@ async function loadAccountData() {
   }
 }
 
+// Funkce pro načtení jména uživatele a aktualizaci UI
+async function loadUserProfile() {
+  const token = localStorage.getItem('authToken');
+  if (!token) {
+    window.location.href = '/login.html';
+    return;
+  }
+
+  try {
+    const response = await fetch('/api/users/profile', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+
+    if (response.status === 401) {
+      console.error('Token je neplatný nebo vypršel.');
+      localStorage.removeItem('authToken');
+      window.location.href = '/login.html';
+      return;
+    }
+
+    if (!response.ok) {
+      console.error('Chyba při načítání uživatelského profilu.');
+      return;
+    }
+
+    const data = await response.json();
+    updateUserName(data.username); // Funkce pro zobrazení jména
+  } catch (error) {
+    console.error('Chyba při načítání profilu:', error);
+  }
+}
+
+// Funkce pro zobrazení jména uživatele v pravém dolním rohu
+function updateUserName(username) {
+  const usernameElement = document.getElementById('username');
+  if (usernameElement) {
+    usernameElement.textContent = username || 'Pepa Novotný'; // Defaultní jméno, pokud není k dispozici
+  }
+}
+
+// Načtení jména uživatele při načtení stránky
+loadUserProfile();
+
+// Funkce pro nastavení progress baru
+function updateProgressBar(accountBalance, accountGoal) {
+  const progressBar = document.getElementById('progress');
+  const progressPercent = (accountBalance / accountGoal) * 100;
+
+  // Pokud je cíl větší než nula, nastavíme šířku progress baru
+  if (accountGoal > 0) {
+    progressBar.style.width = `${Math.min(progressPercent, 100)}%`;
+  } else {
+    progressBar.style.width = '0%';  // Pokud cíl není platný
+  }
+
+  document.getElementById('progress-text').textContent = `${progressPercent}%`;
+}
+
 // Aktualizace dat na stránce
 function updatePageWithAccountData({ accountBalance, accountGoal }) {
-  document.getElementById('balance-amount').textContent = formatNumber(accountBalance) || 'N/A';
-  document.getElementById('balance-goal').textContent = formatNumber(accountGoal) || 'N/A';
+  document.getElementById('balance-amount').textContent = formatNumber(accountBalance) + " Kč" || 'N/A';
+  document.getElementById('balance-goal').textContent = formatNumber(accountGoal) + " Kč" || 'N/A';
+
+  updateProgressBar(accountBalance, accountGoal);
 
   if (accountBalance === null) {
     document.getElementById('accountPopup').style.display = 'flex';
