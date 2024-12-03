@@ -1,3 +1,10 @@
+// Formátování čísel
+function formatNumber(number) {
+  if (number === null || number === undefined || isNaN(number)) return 'N/A';
+  return Number(number).toLocaleString('cs-CZ');
+}
+
+// Načtení dat z databáze
 async function loadAccountData() {
   const token = localStorage.getItem('authToken');
   if (!token) {
@@ -10,7 +17,7 @@ async function loadAccountData() {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
     });
 
@@ -22,31 +29,28 @@ async function loadAccountData() {
     }
 
     if (!response.ok) {
-      console.error('Chyba při načítání zůstatku.');
+      console.error('Chyba při načítání dat.');
       return;
     }
 
     const data = await response.json();
-    const { accountBalance, accountGoal } = data;
-
-    document.getElementById('balance-amount').textContent = formatNumber(accountBalance) || 'N/A';
-    document.getElementById('balance-goal').textContent = formatNumber(accountGoal) || 'N/A';
-
-    if (accountBalance === null) {
-      document.getElementById('accountPopup').style.display = 'block';
-    }
+    updatePageWithAccountData(data);
   } catch (error) {
-    console.error('Chyba při načítání informací:', error);
+    console.error('Chyba při načítání dat:', error);
   }
 }
 
-function formatNumber(number) {
-  if (number === null || number === undefined || isNaN(number)) return 'N/A';
-  return Number(number).toLocaleString('cs-CZ');
+// Aktualizace dat na stránce
+function updatePageWithAccountData({ accountBalance, accountGoal }) {
+  document.getElementById('balance-amount').textContent = formatNumber(accountBalance) || 'N/A';
+  document.getElementById('balance-goal').textContent = formatNumber(accountGoal) || 'N/A';
+
+  if (accountBalance === null) {
+    document.getElementById('accountPopup').style.display = 'flex';
+  }
 }
 
-window.addEventListener('DOMContentLoaded', loadAccountData);
-
+// Odeslání formuláře (uložení dat do databáze)
 document.getElementById('accountForm').addEventListener('submit', async (e) => {
   e.preventDefault();
 
@@ -60,32 +64,33 @@ document.getElementById('accountForm').addEventListener('submit', async (e) => {
   }
 
   try {
-    const response = await fetch('/api/users/update-account', {
+    const response = await fetch('/api/users/update-balance', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ accountBalance, accountGoal }),
     });
 
     if (!response.ok) {
-      console.error('Chyba při ukládání údajů.');
+      console.error('Chyba při ukládání dat.');
       return;
     }
 
+    const updatedData = await response.json();
+    updatePageWithAccountData(updatedData);
+
     document.getElementById('accountPopup').style.display = 'none';
-    window.location.reload();
   } catch (error) {
-    console.error('Chyba při ukládání:', error);
+    console.error('Chyba při ukládání dat:', error);
   }
 });
 
-document.getElementById('closePopup').addEventListener('click', () => {
-  document.getElementById('accountPopup').style.display = 'none';
-});
-
+// Odhlášení uživatele
 document.getElementById('logout').addEventListener('click', () => {
   localStorage.removeItem('authToken');
   window.location.href = '/login.html';
 });
+
+loadAccountData();

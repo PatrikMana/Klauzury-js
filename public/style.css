@@ -224,7 +224,7 @@ h2 {
     color: var(--color-background);
 }
 
-#balance-goal {
+#balance-goal, .balance-goal-text {
     text-align: right;
     color: var(--color-white);
     font-size: var(--font-size-sm);
@@ -254,7 +254,7 @@ h2 {
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1000;
+    z-index: 1;
 }
 
 .popup {

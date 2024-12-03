@@ -62,31 +62,36 @@ exports.getUserBalance = async (req, res) => {
       return res.status(404).json({ message: 'Uživatel nenalezen.' });
     }
 
-    res.status(200).json({ accountBalance: user.accountBalance });
+    res.status(200).json({ accountBalance: user.accountBalance, accountGoal: user.accountGoal });
   } catch (error) {
     console.error('Chyba při načítání zůstatku uživatele:', error);
     res.status(500).json({ message: 'Chyba serveru.' });
   }
 };
 
-exports.updateAccount = async (req, res) => {
+exports.updateBalance = async (req, res) => {
   try {
+    const userId = req.user.id; // Předpokládáme, že middleware verifyToken přidává uživatelské ID do req.user
     const { accountBalance, accountGoal } = req.body;
-    const userId = req.user.id;
 
-    const user = await User.findByPk(userId);
-    
-    if (!user) {
-      return res.status(404).json({ message: 'Uživatel nenalezen.' });
+    if (!accountBalance || !accountGoal) {
+      return res.status(400).json({ message: 'Vyplňte zůstatek a cílovou částku.' });
     }
 
-    user.accountBalance = accountBalance;
-    user.accountGoal = accountGoal;
-    await user.save();
+    // Aktualizace dat v databázi
+    await User.update(
+      { accountBalance, accountGoal },
+      { where: { id: userId } }
+    );
 
-    res.status(200).json({ message: 'Údaje byly úspěšně aktualizovány.' });
+    // Vrácení aktualizovaných dat
+    const updatedUser = await User.findByPk(userId);
+    res.status(200).json({
+      accountBalance: updatedUser.accountBalance,
+      accountGoal: updatedUser.accountGoal,
+    });
   } catch (error) {
-    console.error('Chyba při aktualizaci účtu:', error);
+    console.error('Chyba při aktualizaci zůstatku:', error);
     res.status(500).json({ message: 'Chyba serveru.' });
   }
 };
