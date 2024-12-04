@@ -27,10 +27,10 @@ const Transaction = sequelize.define('Transaction', {
     type: DataTypes.DATE,
     allowNull: false,
   },
-  createdAt: {
-    type: DataTypes.DATE,
-    allowNull: false,
-  },
 });
+
+Transaction.associate = (models) => {
+  Transaction.belongsTo(models.User, { foreignKey: 'userId' });
+};
 
 module.exports = Transaction;

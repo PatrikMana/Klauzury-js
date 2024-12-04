@@ -1,37 +1,24 @@
-const Transaction = require('../models/Transaction');
+const { Transaction } = require('../models/transaction');  // Importujeme správný model pro transakci
 
-exports.createTransaction = async (req, res) => {
-  try {
-    const transaction = await Transaction.create(req.body);
-    res.status(201).json(transaction);
-  } catch (error) {
-    res.status(500).json({ message: 'Chyba při vytváření transakce.', error });
-  }
-};
+// Funkce pro přidání nové transakce
+exports.addTransaction = async (req, res) => {
+  const { name, amount, date, isRecurring, type } = req.body;
+  const userId = req.user.id; // Získáme ID uživatele z tokenu
 
-exports.getTransactions = async (req, res) => {
   try {
-    const transactions = await Transaction.findAll();
-    res.status(200).json(transactions);
-  } catch (error) {
-    res.status(500).json({ message: 'Chyba při získávání transakcí.', error });
-  }
-};
+    // Vytvoření nové transakce v databázi
+    const transaction = await Transaction.create({
+      userId,
+      name,
+      amount,
+      date,
+      isRecurring,
+      type,
+    });
 
-exports.updateTransaction = async (req, res) => {
-  try {
-    const transaction = await Transaction.update(req.body, { where: { id: req.params.id } });
-    res.status(200).json(transaction);
+    res.status(201).json(transaction); // Vrátíme vytvořenou transakci jako odpověď
   } catch (error) {
-    res.status(500).json({ message: 'Chyba při aktualizaci transakce.', error });
-  }
-};
-
-exports.deleteTransaction = async (req, res) => {
-  try {
-    await Transaction.destroy({ where: { id: req.params.id } });
-    res.status(200).json({ message: 'Transakce byla smazána.' });
-  } catch (error) {
-    res.status(500).json({ message: 'Chyba při mazání transakce.', error });
+    console.error('Chyba při přidávání transakce:', error);
+    res.status(500).json({ message: 'Chyba serveru při přidávání transakce.' });
   }
 };

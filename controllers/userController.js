@@ -100,7 +100,7 @@ exports.getProfile = async (req, res) => {
   try {
     const userId = req.user.id; // Uživatelské ID z tokenu
     const user = await User.findByPk(userId, {
-      attributes: ['id', 'username', 'accountBalance', 'accountGoal'], // Vracíme potřebné údaje
+      attributes: ['id', 'username'], // Vracíme potřebné údaje
     });
 
     if (!user) {
@@ -108,9 +108,7 @@ exports.getProfile = async (req, res) => {
     }
 
     res.json({
-      username: user.username,
-      accountBalance: user.accountBalance,
-      accountGoal: user.accountGoal,
+      username: user.username
     });
   } catch (error) {
     console.error('Chyba při získávání profilu:', error);
