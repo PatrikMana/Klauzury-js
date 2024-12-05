@@ -4,12 +4,12 @@ document.getElementById('add-transaction').addEventListener('click', () => {
 });
 
 // Zavření popupu
-document.querySelector('.transaction-popup-cancel').addEventListener('click', () => {
+document.getElementById('transaction-popup-cancel').addEventListener('click', () => {
   document.getElementById('addTransactionPopup').style.display = 'none'; // Zavřít popup
 });
 
 // Odeslání formuláře pro transakci
-document.getElementById('transaction-confirm').addEventListener('click', async () => {
+document.getElementById('transaction-popup-confirm').addEventListener('click', async () => {
   const name = document.getElementById('transaction-name').value;
   const amount = document.getElementById('transaction-amount').value;
   const date = document.getElementById('transaction-date').value;

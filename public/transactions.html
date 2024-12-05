@@ -51,7 +51,7 @@
             </nav>
 
             <div class="user-profile">
-                <img src="placeholder-avatar.png" alt="User avatar">
+                <img src="assets/placeholder-avatar.jpg" alt="User avatar">
                 <div class="user-info">
                     <span class="user-name">Pepa Novotný</span>
                     <a href="#" id="logout">odhlásit se</a>
@@ -128,24 +128,24 @@
     </div>
     <div class="transaction-popup-overlay" id="addTransactionPopup" style="display: none;">
         <div class="transaction-popup-content">
-            <h2>Nový výdaj</h2>
+            <h2>Nová transakce</h2>
             <div class="transaction-popup-form">
                 <div class="transaction-popup-row">
                     <div class="transaction-popup-field">
-                        <input type="text" placeholder="Něco" class="transaction-popup-input">
+                        <input id="transaction-name" type="text" placeholder="Název transakce" class="transaction-popup-input">
                     </div>
                     <div class="transaction-popup-field">
-                        <input type="text" placeholder="100 Kč" class="transaction-popup-input">
+                        <input id="transaction-amount" type="number" placeholder="100 Kč" class="transaction-popup-input">
                     </div>
                 </div>
                 <div class="transaction-popup-row">
                     <div class="transaction-popup-field">
-                        <input type="text" placeholder="6. 11. 2024" class="transaction-popup-input">
+                        <input id="transaction-date" type="date" placeholder="6. 11. 2024" class="transaction-popup-input">
                     </div>
                     <div class="transaction-popup-field transaction-popup-toggle">
                         <label class="transaction-popup-toggle-label">
                             Pravidelné
-                            <input type="checkbox" class="transaction-popup-toggle-input">
+                            <input id="transaction-recurring" type="checkbox" class="transaction-popup-toggle-input">
                             <span class="transaction-popup-toggle-slider"></span>
                         </label>
                     </div>
@@ -163,8 +163,8 @@
                     </div>
                 </div>
                 <div class="transaction-popup-buttons">
-                    <button class="transaction-popup-button transaction-popup-cancel"">Zrušit</button>
-                    <button class="transaction-popup-button transaction-popup-confirm">Potvrdit</button>
+                    <button id="transaction-popup-cancel" class="transaction-popup-button">Zrušit</button>
+                    <button id="transaction-popup-confirm" class="transaction-popup-button">Potvrdit</button>
                 </div>
             </div>
         </div>

@@ -1,4 +1,4 @@
-const { Transaction } = require('../models/transaction');  // Importujeme správný model pro transakci
+const Transaction = require('../models/Transaction'); // Ujisti se, že správně importuješ model
 
 // Funkce pro přidání nové transakce
 exports.addTransaction = async (req, res) => {
@@ -6,7 +6,7 @@ exports.addTransaction = async (req, res) => {
   const userId = req.user.id; // Získáme ID uživatele z tokenu
 
   try {
-    // Vytvoření nové transakce v databázi
+    // Pokusíme se vytvořit novou transakci v databázi
     const transaction = await Transaction.create({
       userId,
       name,
@@ -16,7 +16,8 @@ exports.addTransaction = async (req, res) => {
       type,
     });
 
-    res.status(201).json(transaction); // Vrátíme vytvořenou transakci jako odpověď
+    // Pokud je transakce vytvořena, vrátíme ji zpět jako odpověď
+    res.status(201).json(transaction);
   } catch (error) {
     console.error('Chyba při přidávání transakce:', error);
     res.status(500).json({ message: 'Chyba serveru při přidávání transakce.' });

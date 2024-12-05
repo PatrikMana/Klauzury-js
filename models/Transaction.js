@@ -1,5 +1,5 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database');
+const sequelize = require('../config/database');  // Správně importuj sequelize
 
 const Transaction = sequelize.define('Transaction', {
   id: {
@@ -27,8 +27,13 @@ const Transaction = sequelize.define('Transaction', {
     type: DataTypes.DATE,
     allowNull: false,
   },
+  createdAt: {
+    type: DataTypes.DATE,
+    allowNull: false,
+  },
 });
 
+// Asociace s modelem User
 Transaction.associate = (models) => {
   Transaction.belongsTo(models.User, { foreignKey: 'userId' });
 };

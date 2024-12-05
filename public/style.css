@@ -566,23 +566,23 @@ h2 {
     transition: background-color 0.3s;
 }
 
-.transaction-popup-cancel {
+#transaction-popup-cancel {
     background-color: var(--color-white);
     border: 1px solid var(--color-text);
     color: var(--color-text);
 }
 
-.transaction-popup-cancel:hover {
+#transaction-popup-cancel:hover {
     background-color: var(--color-hover);
 }
 
-.transaction-popup-confirm {
+#transaction-popup-confirm {
     background-color: var(--color-secondary);
     border: none;
     color: var(--color-white);
 }
 
-.transaction-popup-confirm:hover {
+#transaction-popup-confirm:hover {
     background-color: var(--color-text);
 }
 
