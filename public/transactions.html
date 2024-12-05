@@ -64,8 +64,8 @@
                 <div class="monthly-summary">
                     <h2>Tento měsíc:</h2>
                     <div class="summary-amounts">
-                        <span class="income">26 000 Kč</span>
-                        <span class="expenses">14 000 Kč</span>
+                        <span id="income" class="income">26 000 Kč</span>
+                        <span id="expenses" class="expenses">14 000 Kč</span>
                     </div>
                     <div class="summary-bar">
                         <div class="income-bar" style="width: 65%"></div>
@@ -84,40 +84,10 @@
                                 <td>pravidelné</td>
                                 <td class="amount negative">- 6 000 Kč</td>
                             </tr>
-                            <tr>
-                                <td>Něco</td>
-                                <td>4. 11. 2024</td>
-                                <td>nepravidelné</td>
-                                <td class="amount positive">+ 1 000 Kč</td>
-                            </tr>
-                            <tr>
-                                <td>Něco</td>
-                                <td>4. 11. 2024</td>
-                                <td>pravidelné</td>
-                                <td class="amount positive">+ 1 000 Kč</td>
-                            </tr>
-                            <tr>
-                                <td>Něco</td>
-                                <td>4. 11. 2024</td>
-                                <td>nepravidelné</td>
-                                <td class="amount positive">+ 1 000 Kč</td>
-                            </tr>
-                            <tr>
-                                <td>Něco</td>
-                                <td>4. 11. 2024</td>
-                                <td>pravidelné</td>
-                                <td class="amount negative">- 500 Kč</td>
-                            </tr>
-                            <tr>
-                                <td>Něco</td>
-                                <td>4. 11. 2024</td>
-                                <td>nepravidelné</td>
-                                <td class="amount positive">+100 Kč</td>
-                            </tr>
                         </tbody>
                     </table>
                     <div class="show-more">
-                        <a href="#">Zobrazit další</a>
+                        <a id="show-more" href="#">Zobrazit další</a>
                     </div>
                     <button id="add-transaction" class="add-transaction">
                         <i class="fas fa-plus"></i>
