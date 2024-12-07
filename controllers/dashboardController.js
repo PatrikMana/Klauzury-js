@@ -16,19 +16,36 @@ exports.getBalance = async (req, res) => {
 
 exports.getMonthlySummary = async (req, res) => {
   try {
-    const userId = req.user.id;  // Získání ID uživatele z req.user
-    const currentMonth = new Date().getMonth() + 1; // Měsíc je od 0, takže přidáme 1
+    const userId = req.user.id;
+    console.log('ID uživatele:', userId);
 
+    // Získání aktuálního měsíce
+    const currentMonth = new Date().getMonth() + 1;
+    console.log('Aktuální měsíc:', currentMonth);
+
+    // Určení začátku a konce měsíce
+    const startOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+    const endOfMonth = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0);
+
+    // Načtení transakcí pro aktuální měsíc
     const transactions = await Transaction.findAll({
       where: {
         userId,
         createdAt: {
-          [Op.gte]: new Date(new Date().getFullYear(), currentMonth - 1, 1), // Začátek měsíce
-          [Op.lt]: new Date(new Date().getFullYear(), currentMonth, 0), // Konec měsíce
+          [Op.gte]: startOfMonth,
+          [Op.lt]: endOfMonth,
         },
       },
     });
 
+    if (!transactions || transactions.length === 0) {
+      console.error('Žádné transakce nebyly nalezeny.');
+      return res.status(404).json({ message: 'Žádné transakce nebyly nalezeny.' });
+    }
+
+    console.log('Načtené transakce:', transactions);
+
+    // Výpočet příjmů a výdajů
     let income = 0;
     let expenses = 0;
 
@@ -40,6 +57,7 @@ exports.getMonthlySummary = async (req, res) => {
       }
     });
 
+    // Odeslání odpovědi
     res.status(200).json({ income, expenses });
   } catch (error) {
     console.error('Chyba při získávání měsíčního přehledu:', error);

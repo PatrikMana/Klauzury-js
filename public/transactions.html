@@ -53,7 +53,7 @@
             <div class="user-profile">
                 <img src="assets/placeholder-avatar.jpg" alt="User avatar">
                 <div class="user-info">
-                    <span class="user-name">Pepa Novotný</span>
+                    <span id="username" class="user-name">Pepa Novotný</span>
                     <a href="#" id="logout">odhlásit se</a>
                 </div>
             </div>
@@ -68,8 +68,12 @@
                         <span id="expenses" class="expenses">14 000 Kč</span>
                     </div>
                     <div class="summary-bar">
-                        <div class="income-bar" style="width: 65%"></div>
-                        <div class="expenses-bar" style="width: 35%"></div>
+                        <div class="income-bar" style="width: 65%">
+                            <span class="progress-text">NA</span>
+                        </div>
+                        <div class="expenses-bar" style="width: 35%">
+                            <span class="progress-text">NA</span>
+                        </div>
                     </div>
                     <div class="total-amount">+ 12 000 Kč</div>
                 </div>
@@ -77,7 +81,7 @@
                 <div class="transactions-list">
                     <h2>Nedávné transakce:</h2>
                     <table class="transactions-table">
-                        <tbody>
+                        <tbody id="transactions-table-body">
                             <tr>
                                 <td>Nájem</td>
                                 <td>4. 11. 2024</td>
@@ -139,6 +143,6 @@
             </div>
         </div>
     </div>
-    <script src="js/transactions.js"></script>
+    <script src="js/transactions.js" defer></script>
 </body>
 </html>
