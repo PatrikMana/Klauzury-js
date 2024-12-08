@@ -174,9 +174,8 @@ h2 {
 }
 
 /* Progress bary */
-.progress-bar,
-.progress-bar-split {
-    height: 20px;
+.progress-bar {
+    height: 25px;
     background-color: var(--color-border);
     border-radius: 10px;
     margin: 15px 0;
@@ -194,6 +193,7 @@ h2 {
 #progress {
     display: flex;
     justify-content: center;
+    align-items: center;
     background-color: var(--color-primary);
 }
 
@@ -343,16 +343,20 @@ h2 {
 }
 
 .income {
-    color: #00C853;
+    color: #039f44;
 }
 
 .expenses {
     color: #D32F2F;
 }
 
+.progress-text {
+    text-align: center;
+    margin: auto;
+}
+
 .summary-bar {
-    height: 20px;
-    background-color: #D32F2F;
+    height: 25px;
     border-radius: 10px;
     overflow: hidden;
     display: flex;
@@ -360,7 +364,30 @@ h2 {
 
 .income-bar {
     height: 100%;
-    background-color: #00C853;
+    background-color: #039f44;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+.expenses-bar {
+    background-color: #D32F2F;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--color-white);
+    font-weight: bold;
+}
+
+#ds-i {
+    background-color: var(--color-primary)
+}
+
+#ds-e {
+    background-color: var(--color-active);
+    color: var(--color-white);
 }
 
 .total-amount {
@@ -368,6 +395,7 @@ h2 {
     font-weight: bold;
     text-align: center;
     margin-top: 15px;
+    font-weight: bold;
 }
 
 /* Tabulka transakcí */

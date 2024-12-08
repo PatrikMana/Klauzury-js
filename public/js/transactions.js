@@ -10,7 +10,13 @@ document.addEventListener('DOMContentLoaded', () => {
   loadMoreTransactions();
   loadSummary();
   loadUserProfile();
+  loadTransactionsSummaryBar();
 });
+
+function formatNumber(number) {
+  if (number === null || number === undefined || isNaN(number)) return 'N/A';
+  return Number(number).toLocaleString('cs-CZ');
+}
 
 document.getElementById("transaction-popup-cancel").addEventListener('click', () => document.getElementById('addTransactionPopup').style.display = 'none')
 
@@ -54,6 +60,8 @@ document.getElementById('transaction-popup-confirm').addEventListener('click', a
   const isRecurring = document.getElementById('transaction-recurring').checked;
   const type = document.querySelector('input[name="transactionType"]:checked').value; // Výdaj nebo Příjem
 
+  const adjustedAmount = type === 'expense' ? -Math.abs(amount) : Math.abs(amount);
+
   const token = localStorage.getItem('authToken');
   if (!token) {
       window.location.href = '/login.html';
@@ -69,7 +77,7 @@ document.getElementById('transaction-popup-confirm').addEventListener('click', a
           },
           body: JSON.stringify({
               name: name,
-              amount: parseFloat(amount),
+              amount: parseFloat(adjustedAmount),
               date: date,
               isRecurring: isRecurring,
               type: type,
@@ -122,8 +130,7 @@ async function loadSummary() {
       const summary = await response.json();
       updateSummary(summary);
       const totalAmount = summary.income + summary.expenses; // Součet příjmů a výdajů
-      document.getElementById('transactions-total-amount').textContent =
-      (totalAmount >= 0 ? '+ ' : '- ') + Math.abs(totalAmount) + ' Kč';
+      document.getElementById('transactions-total-amount').textContent = (totalAmount >= 0 ? '+ ' : '- ') + formatNumber(Math.abs(totalAmount)) + ' Kč';
   } catch (error) {
       console.error('Chyba při získávání měsíčního přehledu:', error);
   }
@@ -131,8 +138,59 @@ async function loadSummary() {
 
 // Funkce pro aktualizaci přehledu
 function updateSummary(summary) {
-  document.getElementById('income').textContent = summary.income + ' Kč';
-  document.getElementById('expenses').textContent = summary.expenses + ' Kč';
+  document.getElementById('income').textContent = formatNumber(summary.income) + ' Kč';
+  document.getElementById('expenses').textContent = formatNumber(summary.expenses) + ' Kč';
+}
+
+async function loadTransactionsSummaryBar() {
+  try {
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      window.location.href = '/login.html';
+      return;
+    }
+
+    const response = await fetch('/api/transactions/summary', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      console.error('Failed to fetch transactions summary.');
+      return;
+    }
+
+    const { income, expenses } = await response.json();
+
+    // Výpočet procent příjmů a výdajů
+    const total = income + Math.abs(expenses); // Celkový objem příjmů a výdajů
+    const incomePercentage = total === 0 ? 50 : (income / total) * 100;
+    const expensesPercentage = total === 0 ? 50 : (Math.abs(expenses) / total) * 100;
+
+    // Aktualizace šířky příjmové a výdajové části progress baru
+    const incomeBar = document.querySelector('.income-bar');
+    const expensesBar = document.querySelector('.expenses-bar');
+
+    if (incomeBar && expensesBar) {
+      incomeBar.style.width = `${incomePercentage}%`;
+      expensesBar.style.width = `${expensesPercentage}%`;
+
+      // Aktualizace textu uvnitř progress baru
+      incomeBar.querySelector('.progress-text').textContent = `${incomePercentage.toFixed(0)}%`;
+      expensesBar.querySelector('.progress-text').textContent = `${expensesPercentage.toFixed(0)}%`;
+
+      if (incomePercentage < 10) {
+        incomeBar.querySelector('.progress-text').style.display = 'none';
+      }
+      else if (expensesPercentage < 10) {
+        expensesBar.querySelector('.progress-text').style.display = 'none';
+      }
+    }
+  } catch (error) {
+    console.error('Error while loading transactions summary bar:', error);
+  }
 }
 
 // Odhlášení uživatele
@@ -204,7 +262,7 @@ function appendTransactions(transactions) {
       <td>${transaction.name}</td>
       <td>${formattedDate}</td>
       <td>${transaction.recurring ? 'Pravidelná' : 'Jednorázová'}</td>
-      <td class="amount ${transaction.amount < 0 ? 'negative' : 'positive'}">${transaction.amount} Kč</td>
+      <td class="amount ${transaction.amount < 0 ? 'negative' : 'positive'}">${formatNumber(transaction.amount)} Kč</td>
     `;
     transactionTableBody.appendChild(row);
   });
@@ -286,6 +344,9 @@ async function refreshTransactions() {
     } else {
       document.getElementById('show-more').style.display = 'block';
     }
+
+    loadTransactionsSummaryBar()
+    loadSummary()
 
   } catch (error) {
     console.error('Error while refreshing transactions:', error);

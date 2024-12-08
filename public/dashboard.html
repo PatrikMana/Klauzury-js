@@ -35,18 +35,6 @@
                             Simulátor rozpočtu
                         </a>
                     </li>
-                    <li>
-                        <a href="mortgage.html">
-                            <i class="fas fa-home"></i>
-                            Hypotéky
-                        </a>
-                    </li>
-                    <li>
-                        <a href="goals.html">
-                            <i class="fas fa-bullseye"></i>
-                            Cíle
-                        </a>
-                    </li>
                 </ul>
             </nav>
 
@@ -64,10 +52,10 @@
                 <h2>Nastavení účtu</h2>
                 <form class="popup-form" id="accountForm">
                     <label for="accountBalance">Aktuální stav účtu:</label>
-                    <input type="number" id="accountBalance" name="accountBalance" required>
+                    <input type="number" id="accountBalance" name="accountBalance" required placeholder="Váš zůstatek">
                     
                     <label for="accountGoal">Cílová částka:</label>
-                    <input type="number" id="accountGoal" name="accountGoal" required>
+                    <input type="number" id="accountGoal" name="accountGoal" required placeholder="Váš cíl">
                     
                     <button type="submit">Uložit</button>
                 </form>
@@ -98,12 +86,12 @@
 
                 <div class="last-month-box">
                     <h2>Minulý měsíc:</h2>
-                    <div id="dashboard-month-amount" class="month-amount">+12 000 Kč</div>
-                    <div class="progress-bar-split">
-                        <div class="progress-positive" style="width: 65%">
+                    <div id="dashboard-month-amount" class="month-amount">+0 Kč</div>
+                    <div class="summary-bar">
+                        <div id="ds-i" class="income-bar" style="width: 50%,">
                             <span class="progress-text">NA</span>
                         </div>
-                        <div class="progress-negative" style="width: 35%">
+                        <div id="ds-e" class="expenses-bar" style="width: 50%">
                             <span class="progress-text">NA</span>
                         </div>
                     </div>

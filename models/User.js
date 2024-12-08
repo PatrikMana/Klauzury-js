@@ -21,7 +21,7 @@ const User = sequelize.define('User', {
     allowNull: false,
   },
   accountBalance: {
-    type: DataTypes.FLOAT,
+    type: DataTypes.DECIMAL(10, 2),
     allowNull: true,
   },
   accountGoal: {

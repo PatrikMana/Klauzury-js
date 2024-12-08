@@ -62,6 +62,7 @@ exports.getMonthlySummary = async (req, res) => {
 
         transaction.updatedAt = updatedDate;
         transaction.date = updatedDate; // Aktualizujeme datum na dnešní
+        transaction.credited = false; // Nastavíme jako nezapočtenou
         await transaction.save(); // Uložíme aktualizaci
       }
     }

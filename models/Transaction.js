@@ -31,6 +31,10 @@ const Transaction = sequelize.define('Transaction', {
     type: DataTypes.DATE,
     allowNull: false,
   },
+  credited: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false, 
+  },
 });
 
 // Asociace s modelem User

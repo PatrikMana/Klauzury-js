@@ -98,7 +98,7 @@ exports.getTransactions = async (req, res) => {
           [Op.between]: [oneMonthAgo, now], // Pouze transakce mezi těmito daty
         },
       },
-      order: [['date', 'DESC']], // Seřazení od nejnovějších
+      order: [['updatedAt', 'DESC']], // Seřazení od nejnovějších
       offset: parseInt(req.query.offset, 10) || 0,
       limit: parseInt(req.query.limit, 10) || 6,
     });

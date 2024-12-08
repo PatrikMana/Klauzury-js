@@ -4,6 +4,12 @@ function formatNumber(number) {
   return Number(number).toLocaleString('cs-CZ');
 }
 
+document.addEventListener('DOMContentLoaded', () => {
+  calculateMonthSummary();
+  loadAccountData();
+  loadUserProfile();
+});
+
 // Načtení dat z databáze
 async function loadAccountData() {
   const token = localStorage.getItem('authToken');
@@ -84,30 +90,79 @@ function updateUserName(username) {
   }
 }
 
-// Načtení jména uživatele při načtení stránky
-loadUserProfile();
-
 // Funkce pro nastavení progress baru
-function updateProgressBar(accountBalance, accountGoal) {
-  const progressBar = document.getElementById('progress');
-  const progressPercent = (accountBalance / accountGoal) * 100;
+async function updateProgressBars(accountBalance, accountGoal) {
+  try {
+    // 1. Aktualizace hlavního progress baru (zůstatek vs. cíl)
+    const progressBar = document.getElementById('progress');
+    const progressText = document.getElementById('progress-text');
+    const progressPercent = accountGoal > 0 ? (accountBalance / accountGoal) * 100 : 0;
 
-  // Pokud je cíl větší než nula, nastavíme šířku progress baru
-  if (accountGoal > 0) {
-    progressBar.style.width = `${Math.min(progressPercent, 100)}%`;
-  } else {
-    progressBar.style.width = '0%';  // Pokud cíl není platný
+    if (progressBar) {
+      progressBar.style.width = `${Math.min(progressPercent, 100)}%`;
+    }
+
+    if (progressText) {
+      progressText.textContent = `${Math.round(progressPercent)}%`;
+    }
+
+    // 2. Fetch příjmů a výdajů
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      window.location.href = '/login.html';
+      return;
+    }
+
+    const response = await fetch('/api/transactions/summary', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      console.error('Failed to fetch transactions summary.');
+      return;
+    }
+
+    const { income, expenses } = await response.json();
+
+    // 3. Výpočet procent pro příjmy/výdaje
+    const total = income + Math.abs(expenses); // Celkový objem příjmů a výdajů
+    const incomePercentage = total === 0 ? 50 : (income / total) * 100;
+    const expensesPercentage = total === 0 ? 50 : (Math.abs(expenses) / total) * 100;
+
+    // 4. Aktualizace příjmového a výdajového progress baru
+    const incomeBar = document.querySelector('.income-bar');
+    const expensesBar = document.querySelector('.expenses-bar');
+
+    if (incomeBar && expensesBar) {
+      incomeBar.style.width = `${incomePercentage}%`;
+      expensesBar.style.width = `${expensesPercentage}%`;
+
+      // Aktualizace textu uvnitř progress baru
+      incomeBar.querySelector('.progress-text').textContent = `${incomePercentage.toFixed(0)}%`;
+      expensesBar.querySelector('.progress-text').textContent = `${expensesPercentage.toFixed(0)}%`;
+
+      if (incomePercentage < 10) {
+        incomeBar.querySelector('.progress-text').style.display = 'none';
+      }
+      else if (expensesPercentage < 10) {
+        expensesBar.querySelector('.progress-text').style.display = 'none';
+      }
+    }
+  } catch (error) {
+    console.error('Error while updating progress bars:', error);
   }
-
-  document.getElementById('progress-text').textContent = `${progressPercent}%`;
 }
+
 
 // Aktualizace dat na stránce
 function updatePageWithAccountData({ accountBalance, accountGoal }) {
   document.getElementById('balance-amount').textContent = formatNumber(accountBalance) + " Kč" || 'N/A';
   document.getElementById('balance-goal').textContent = formatNumber(accountGoal) + " Kč" || 'N/A';
 
-  updateProgressBar(accountBalance, accountGoal);
+  updateProgressBars(accountBalance, accountGoal);
 
   if (accountBalance === null) {
     document.getElementById('accountPopup').style.display = 'flex';
@@ -180,13 +235,8 @@ async function calculateMonthSummary() {
 
     const summary = await response.json();
     const totalAmount = summary.income + summary.expenses; // Součet příjmů a výdajů
-    document.getElementById('dashboard-month-amount').textContent =
-      (totalAmount >= 0 ? '+ ' : '- ') + Math.abs(totalAmount) + ' Kč';
+    document.getElementById('dashboard-month-amount').textContent = (totalAmount >= 0 ? '+ ' : '- ') + formatNumber(Math.abs(totalAmount)) + ' Kč';
   } catch (error) {
     console.error('Chyba při výpočtu měsíčního přehledu:', error);
   }
 }
-
-// Volání funkce při načítání stránky 
-calculateMonthSummary();
-loadAccountData();

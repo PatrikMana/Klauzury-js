@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const Transaction = require('../models/Transaction');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
@@ -56,13 +57,42 @@ exports.getUserBalance = async (req, res) => {
 
     const userId = req.user.id;
 
+    // Načtení uživatele z databáze
     const user = await User.findByPk(userId);
 
     if (!user) {
       return res.status(404).json({ message: 'Uživatel nenalezen.' });
     }
 
-    res.status(200).json({ accountBalance: user.accountBalance, accountGoal: user.accountGoal });
+    // Načíst nezapočtené transakce
+    const uncreditedTransactions = await Transaction.findAll({
+      where: {
+        userId,
+        credited: false,
+      },
+    });
+
+    let totalUpdate = 0;
+
+    // Zpracovat nezapočtené transakce
+    for (const transaction of uncreditedTransactions) {
+      totalUpdate += parseFloat(transaction.amount); // Přičteme hodnotu transakce
+      transaction.credited = true; // Nastavíme jako započtenou
+      await transaction.save(); // Uložíme změnu
+    }
+
+    // Aktualizovat zůstatek uživatele, pokud jsou nezapočtené transakce
+    if (totalUpdate !== 0) {
+      const updatedBalance = parseFloat(user.accountBalance) + totalUpdate;
+      user.accountBalance = parseFloat(updatedBalance.toFixed(2)); // Zaokrouhlíme na dvě desetinná místa
+      await user.save(); // Uložíme aktualizovaný zůstatek
+    }
+
+    // Vrátit aktuální zůstatek a cíl uživatele
+    res.status(200).json({
+      accountBalance: user.accountBalance,
+      accountGoal: user.accountGoal,
+    });
   } catch (error) {
     console.error('Chyba při načítání zůstatku uživatele:', error);
     res.status(500).json({ message: 'Chyba serveru.' });
