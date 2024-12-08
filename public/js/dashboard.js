@@ -309,7 +309,27 @@ async function calculateMonthSummary() {
 
     const summary = await response.json();
     const totalAmount = summary.income + summary.expenses; // Součet příjmů a výdajů
-    document.getElementById('dashboard-month-amount').textContent = (totalAmount >= 0 ? '+ ' : '- ') + formatNumber(Math.abs(totalAmount)) + ' Kč';
+    
+    // Nastavíme hodnotu pro zůstatek v dashboardu
+    document.getElementById('dashboard-month-amount').textContent = 
+      (totalAmount >= 0 ? '+ ' : '- ') + formatNumber(Math.abs(totalAmount)) + ' Kč';
+
+    // Generování zprávy pro měsíční přehled
+    let monthMessage = '';
+    if (totalAmount > 0) {
+      monthMessage = `Za minulý měsíc jste ${formatNumber(totalAmount)} Kč v plusu, jen tak dál!`;
+    } else if (totalAmount < 0) {
+      monthMessage = `Za minulý měsíc jste ${formatNumber(Math.abs(totalAmount))} Kč v mínusu, zvažte úpravu rozpočtu.`;
+    } else {
+      monthMessage = 'Za minulý měsíc jste byli na nule, zlepšete svůj rozpočet!';
+    }
+
+    // Zobrazíme zprávu na stránce v elementu .month-info
+    const monthInfoElement = document.querySelector('.month-info');
+    if (monthInfoElement) {
+      monthInfoElement.textContent = monthMessage;
+    }
+
     loadAccountData();
   } catch (error) {
     console.error('Chyba při výpočtu měsíčního přehledu:', error);
