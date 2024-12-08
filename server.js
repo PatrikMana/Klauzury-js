@@ -4,7 +4,6 @@ const express = require('express');
 const sequelize = require('./config/database');
 const userRoutes = require('./routes/userRoutes');
 const transactionRoutes = require('./routes/transactionRoutes');
-const budgetSimulationRoutes = require('./routes/budgetSimulationRoutes');
 const authRoutes = require('./routes/authRoutes');
 const path = require('path');
 const dashboardRoutes = require('./routes/dashboardRoutes');
@@ -21,7 +20,6 @@ app.get('/', (req, res) => {
 
 app.use('/api/users', userRoutes);
 app.use('/api/transactions', transactionRoutes);
-app.use('/api/budget-simulations', budgetSimulationRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/alerts', alertRoutes);
