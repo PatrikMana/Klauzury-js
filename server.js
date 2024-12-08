@@ -8,6 +8,7 @@ const budgetSimulationRoutes = require('./routes/budgetSimulationRoutes');
 const authRoutes = require('./routes/authRoutes');
 const path = require('path');
 const dashboardRoutes = require('./routes/dashboardRoutes');
+const alertRoutes = require('./routes/alertRoutes');
 
 const app = express();
 
@@ -23,6 +24,7 @@ app.use('/api/transactions', transactionRoutes);
 app.use('/api/budget-simulations', budgetSimulationRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/alerts', alertRoutes);
 
 sequelize.authenticate()
   .then(() => console.log('Připojení k databázi bylo úspěšné!'))

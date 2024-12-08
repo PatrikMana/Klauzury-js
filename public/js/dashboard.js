@@ -10,6 +10,68 @@ document.addEventListener('DOMContentLoaded', () => {
   loadUserProfile();
 });
 
+// Funkce pro vložení alertu do seznamu
+function insertAlertAsText(message) {
+  const alertList = document.querySelector('.notifications-box ul');
+
+  if (!alertList) {
+    console.error('Seznam upozornění nebyl nalezen.');
+    return;
+  }
+
+  // Odstraníme výchozí zprávu, pokud existuje
+  const defaultAlert = alertList.querySelector('li');
+  if (defaultAlert && defaultAlert.textContent === 'nemáte žádné upozornění') {
+    alertList.innerHTML = '';
+  }
+
+  // Vytvoříme nový textový prvek seznamu
+  const alertItem = document.createElement('li');
+  alertItem.textContent = message;
+
+  // Přidáme prvek do seznamu
+  alertList.appendChild(alertItem);
+}
+
+// Funkce pro načtení alertů z API a jejich zobrazení
+async function fetchAndDisplayAlerts() {
+  const token = localStorage.getItem('authToken');
+  if (!token) {
+    window.location.href = '/login.html';
+    return;
+  }
+
+  try {
+    const response = await fetch('/api/alerts', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Nepodařilo se načíst alerty.');
+    }
+
+    const alerts = await response.json();
+
+    // Pokud nejsou žádné alerty, zobrazíme výchozí zprávu
+    if (alerts.length === 0) {
+      insertAlertAsText('nemáte žádné upozornění');
+      return;
+    }
+
+    // Přidáme každý alert do seznamu
+    alerts.forEach(alert => {
+      insertAlertAsText(alert.message);
+    });
+  } catch (error) {
+    console.error('Chyba při načítání alertů:', error);
+    insertAlertAsText('Nepodařilo se načíst upozornění.');
+  }
+}
+
 // Načtení dat z databáze
 async function loadAccountData() {
   const token = localStorage.getItem('authToken');
@@ -41,6 +103,7 @@ async function loadAccountData() {
 
     const data = await response.json();
     updatePageWithAccountData(data);
+    fetchAndDisplayAlerts();
   } catch (error) {
     console.error('Chyba při načítání dat:', error);
   }
@@ -98,6 +161,17 @@ async function updateProgressBars(accountBalance, accountGoal) {
     const progressText = document.getElementById('progress-text');
     const progressPercent = accountGoal > 0 ? (accountBalance / accountGoal) * 100 : 0;
 
+    if (progressPercent < 10) {
+      // Skryjeme progress bar a text, pokud je procento menší než 0
+      if (progressBar) {
+        progressBar.style.display = 'none';
+      }
+    }
+
+    if (progressPercent < 0) { 
+      progressText.style.display = 'none';
+    }
+    
     if (progressBar) {
       progressBar.style.width = `${Math.min(progressPercent, 100)}%`;
     }

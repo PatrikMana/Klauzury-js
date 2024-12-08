@@ -334,6 +334,8 @@ async function refreshTransactions() {
     // Vyčistíme tabulku a načteme nové transakce
     const transactionTableBody = document.getElementById('transactions-table-body');
     transactionTableBody.innerHTML = '';
+    loadTransactionsSummaryBar()
+    loadSummary()
     appendTransactions(transactions);
 
     offset = transactions.length; // Reset offset na počet načtených transakcí
@@ -344,9 +346,6 @@ async function refreshTransactions() {
     } else {
       document.getElementById('show-more').style.display = 'block';
     }
-
-    loadTransactionsSummaryBar()
-    loadSummary()
 
   } catch (error) {
     console.error('Error while refreshing transactions:', error);
