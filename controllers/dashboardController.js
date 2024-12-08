@@ -1,19 +1,6 @@
 const Transaction = require('../models/Transaction');
 const { Op } = require('sequelize');
 
-exports.getBalance = async (req, res) => {
-  try {
-    if (!req.user) {
-      return res.status(401).json({ message: 'Uživatel není ověřen.' });
-    }
-
-    res.status(200).json({ accountBalance: req.user.accountBalance });
-  } catch (error) {
-    console.error('Chyba při načítání zůstatku uživatele:', error);
-    res.status(500).json({ message: 'Chyba serveru.' });
-  }
-};
-
 exports.getMonthlySummary = async (req, res) => {
   const userId = req.user.id;
   const now = new Date();
@@ -90,18 +77,5 @@ exports.getMonthlySummary = async (req, res) => {
   } catch (error) {
     console.error('Error while getting monthly summary:', error);
     res.status(500).json({ message: 'Chyba při získávání měsíčního přehledu.' });
-  }
-};
-
-exports.getAlerts = async (req, res) => {
-  try {
-    const alerts = [
-      { message: 'Splátka hypotéky za 7 dní.', type: 'warning' },
-      { message: 'Plánovaná transakce: 5 000 Kč za 3 dny.', type: 'info' },
-    ];
-    res.status(200).json(alerts);
-  } catch (error) {
-    console.error('Chyba při získávání upozornění:', error);
-    res.status(500).json({ message: 'Chyba při získávání upozornění.' });
   }
 };
