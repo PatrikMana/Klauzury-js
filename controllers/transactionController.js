@@ -1,5 +1,6 @@
 const Transaction = require('../models/Transaction'); // Ujisti se, že správně importuješ model
 const cron = require('node-cron'); // Naimportujeme node-cron
+const { Op } = require('sequelize');
 
 // Funkce pro přidání nové transakce
 exports.addTransaction = async (req, res) => {
@@ -83,17 +84,36 @@ cron.schedule('0 0 1 * *', async () => {
 });
 
 exports.getTransactions = async (req, res) => {
-  try {
-    const userId = req.user.id;
+  const userId = req.user.id;
+  const now = new Date();
+  const oneMonthAgo = new Date();
+  oneMonthAgo.setMonth(now.getMonth() - 1);
 
-    // Načteme transakce pro uživatele s limitem 6
+  try {
+    // Načítání transakcí v rámci aktuálního měsíce
     const transactions = await Transaction.findAll({
-      where: { userId },
-      limit: 6,
-      order: [['createdAt', 'DESC']],
+      where: {
+        userId,
+        date: {
+          [Op.between]: [oneMonthAgo, now], // Pouze transakce mezi těmito daty
+        },
+      },
+      order: [['date', 'DESC']], // Seřazení od nejnovějších
+      offset: parseInt(req.query.offset, 10) || 0,
+      limit: parseInt(req.query.limit, 10) || 6,
     });
 
-    res.status(200).json(transactions);
+    // Počítání celkového počtu relevantních transakcí
+    const totalTransactions = await Transaction.count({
+      where: {
+        userId,
+        date: {
+          [Op.between]: [oneMonthAgo, now], // Stejný filtr pro relevantní transakce
+        },
+      },
+    });
+
+    res.status(200).json({ transactions, totalTransactions });
   } catch (error) {
     console.error('Chyba při načítání transakcí:', error);
     res.status(500).json({ message: 'Chyba při načítání transakcí.' });

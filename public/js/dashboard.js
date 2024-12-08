@@ -157,4 +157,36 @@ document.getElementById('logout').addEventListener('click', () => {
   window.location.href = '/login.html';
 });
 
+// Funkce pro výpočet a zobrazení součtu transakcí na dashboardu
+async function calculateMonthSummary() {
+  const token = localStorage.getItem('authToken');
+  if (!token) {
+    window.location.href = '/login.html';
+    return;
+  }
+
+  try {
+    const response = await fetch('/api/dashboard/summary', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      console.error('Chyba při načítání dat pro měsíční přehled.');
+      return;
+    }
+
+    const summary = await response.json();
+    const totalAmount = summary.income + summary.expenses; // Součet příjmů a výdajů
+    document.getElementById('dashboard-month-amount').textContent =
+      (totalAmount >= 0 ? '+ ' : '- ') + Math.abs(totalAmount) + ' Kč';
+  } catch (error) {
+    console.error('Chyba při výpočtu měsíčního přehledu:', error);
+  }
+}
+
+// Volání funkce při načítání stránky 
+calculateMonthSummary();
 loadAccountData();

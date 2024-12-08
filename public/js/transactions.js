@@ -1,5 +1,15 @@
 document.getElementById('add-transaction').addEventListener('click', () => {
   document.getElementById('addTransactionPopup').style.display = 'flex';  // Otevřít popup
+  document.getElementById('transaction-name').value = '';
+  document.getElementById('transaction-amount').value = '';
+  document.getElementById('transaction-date').value = '';
+  document.getElementById('transaction-recurring').checked = false;	
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+  loadMoreTransactions();
+  loadSummary();
+  loadUserProfile();
 });
 
 document.getElementById("transaction-popup-cancel").addEventListener('click', () => document.getElementById('addTransactionPopup').style.display = 'none')
@@ -36,64 +46,6 @@ async function checkAuthToken() {
 // Zavoláme tuto funkci při načítání stránky
 checkAuthToken();
 
-// Načteme transakce a zobrazíme je v tabulce (s limitem 6)
-async function loadTransactions() {
-  const token = localStorage.getItem('authToken');
-  if (!token) {
-      window.location.href = '/login.html';
-      return;
-  }
-
-  try {
-      const response = await fetch('/api/transactions', {
-          method: 'GET',
-          headers: {
-              'Authorization': `Bearer ${token}`,
-          },
-      });
-
-      if (!response.ok) {
-          console.error('Chyba při načítání transakcí.');
-          return;
-      }
-
-      const transactions = await response.json();
-      displayTransactions(transactions);
-  } catch (error) {
-      console.error('Chyba při načítání transakcí:', error);
-  }
-}
-
-// Funkce pro zobrazení transakcí v tabulce
-function displayTransactions(transactions) {
-  const transactionTableBody = document.getElementById('transactions-table-body');
-  if (!transactionTableBody) {
-      console.error('Element "transactions-table-body" nebyl nalezen.');
-      return;
-  }
-
-  transactionTableBody.innerHTML = ''; // Vyprázdníme předchozí obsah
-
-  // Nastavíme limit zobrazených transakcí (6)
-  const limitedTransactions = transactions.slice(0, 6);
-  limitedTransactions.forEach(transaction => {
-      const row = document.createElement('tr');
-      row.innerHTML = `
-          <td>${transaction.name}</td>
-          <td>${transaction.date}</td>
-          <td>${transaction.recurring ? 'Pravidelná' : 'Jednorázová'}</td>
-          <td class="amount ${transaction.amount < 0 ? 'negative' : 'positive'}">${transaction.amount} Kč</td>
-      `;
-      transactionTableBody.appendChild(row);
-  });
-
-  // Pokud máme více než 6 transakcí, zobrazíme tlačítko pro zobrazení dalších
-  if (transactions.length > 6) {
-      const showMoreButton = document.getElementById('show-more');
-      showMoreButton.style.display = 'block';
-  }
-}
-
 // Funkce pro odeslání nové transakce
 document.getElementById('transaction-popup-confirm').addEventListener('click', async () => {
   const name = document.getElementById('transaction-name').value;
@@ -125,50 +77,25 @@ document.getElementById('transaction-popup-confirm').addEventListener('click', a
       });
 
       if (!response.ok) {
-          console.error('Chyba při ukládání transakce.');
-          return;
+        console.error('Chyba při ukládání transakce.');
+        return;
       }
+
+      name.value = '';
+      amount.value = '';
+      date.value = '';
+      isRecurring.checked = false;
 
       // Po úspěšném odeslání transakce
       document.getElementById('addTransactionPopup').style.display = 'none'; // Zavřít popup
 
       // Zobrazíme alert okno s úspěšným přidáním
       alert('Transakce byla úspěšně přidána!');
-
-      // Načteme znovu transakce
-      loadTransactions();
+      
   } catch (error) {
       console.error('Chyba při ukládání transakce:', error);
   }
-});
-
-// Zobrazení dalších transakcí (pokud existují)
-document.getElementById('show-more').addEventListener('click', async () => {
-  const token = localStorage.getItem('authToken');
-  if (!token) {
-      window.location.href = '/login.html';
-      return;
-  }
-
-  try {
-      const response = await fetch('/api/transactions', {
-          method: 'GET',
-          headers: {
-              'Authorization': `Bearer ${token}`,
-          },
-      });
-
-      if (!response.ok) {
-          console.error('Chyba při načítání transakcí.');
-          return;
-      }
-
-      const transactions = await response.json();
-      displayTransactions(transactions);
-      document.getElementById('show-more').style.display = 'none'; // Skryjeme tlačítko po zobrazení všech transakcí
-  } catch (error) {
-      console.error('Chyba při načítání transakcí:', error);
-  }
+  refreshTransactions()
 });
 
 // Funkce pro výpočet příjmů a výdajů za aktuální měsíc
@@ -194,6 +121,9 @@ async function loadSummary() {
 
       const summary = await response.json();
       updateSummary(summary);
+      const totalAmount = summary.income + summary.expenses; // Součet příjmů a výdajů
+      document.getElementById('transactions-total-amount').textContent =
+      (totalAmount >= 0 ? '+ ' : '- ') + Math.abs(totalAmount) + ' Kč';
   } catch (error) {
       console.error('Chyba při získávání měsíčního přehledu:', error);
   }
@@ -255,7 +185,112 @@ function updateUserName(username) {
   }
 }
 
-// Zavoláme při načítání stránky
-loadTransactions();
-loadSummary();
-loadUserProfile();
+let offset = 0; // Track the current offset for paginated requests
+const limit = 6; // Number of transactions to fetch at a time
+
+// Function to append transactions to the table
+function appendTransactions(transactions) {
+  const transactionTableBody = document.getElementById('transactions-table-body');
+  transactions.forEach((transaction) => {
+    const transactionDate = new Date(transaction.date);
+    const formattedDate = transactionDate.toLocaleDateString('cs-CZ', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    });
+
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${transaction.name}</td>
+      <td>${formattedDate}</td>
+      <td>${transaction.recurring ? 'Pravidelná' : 'Jednorázová'}</td>
+      <td class="amount ${transaction.amount < 0 ? 'negative' : 'positive'}">${transaction.amount} Kč</td>
+    `;
+    transactionTableBody.appendChild(row);
+  });
+}
+
+// Function to load more transactions
+async function loadMoreTransactions() {
+  const token = localStorage.getItem('authToken');
+  if (!token) {
+    window.location.href = '/login.html';
+    return;
+  }
+
+  try {
+    const response = await fetch(`/api/transactions?offset=${offset}&limit=${limit}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      console.error('Failed to fetch transactions.');
+      return;
+    }
+
+    const data = await response.json();
+    const transactions = data.transactions;
+    const totalTransactions = data.totalTransactions;
+
+    appendTransactions(transactions);
+    offset += transactions.length;
+
+    const remainingTransactions = totalTransactions - offset;
+
+    if (remainingTransactions === 0) {
+      document.getElementById('show-more').style.display = 'none';
+      return;
+    }
+  } catch (error) {
+    console.error('Error while loading transactions:', error);
+  }
+}
+
+// Function to refresh transactions after adding a new one
+async function refreshTransactions() {
+  const token = localStorage.getItem('authToken');
+  if (!token) {
+    window.location.href = '/login.html';
+    return;
+  }
+
+  try {
+    const response = await fetch(`/api/transactions?offset=0&limit=${limit}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      console.error('Failed to fetch transactions.');
+      return;
+    }
+
+    const data = await response.json();
+    const transactions = data.transactions;
+
+    // Vyčistíme tabulku a načteme nové transakce
+    const transactionTableBody = document.getElementById('transactions-table-body');
+    transactionTableBody.innerHTML = '';
+    appendTransactions(transactions);
+
+    offset = transactions.length; // Reset offset na počet načtených transakcí
+
+    // Kontrola tlačítka "Zobrazit další"
+    if (offset >= (data.totalTransactions)) {
+      document.getElementById('show-more').style.display = 'none';
+    } else {
+      document.getElementById('show-more').style.display = 'block';
+    }
+
+  } catch (error) {
+    console.error('Error while refreshing transactions:', error);
+  }
+}
+
+// Přidání listeneru na tlačítko "Zobrazit další"
+document.getElementById('show-more').addEventListener('click', loadMoreTransactions);

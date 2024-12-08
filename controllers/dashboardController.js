@@ -15,52 +15,79 @@ exports.getBalance = async (req, res) => {
 };
 
 exports.getMonthlySummary = async (req, res) => {
+  const userId = req.user.id;
+  const now = new Date();
+  const oneMonthAgo = new Date();
+  oneMonthAgo.setMonth(now.getMonth() - 1);
+
   try {
-    const userId = req.user.id;
-    console.log('ID uživatele:', userId);
-
-    // Získání aktuálního měsíce
-    const currentMonth = new Date().getMonth() + 1;
-    console.log('Aktuální měsíc:', currentMonth);
-
-    // Určení začátku a konce měsíce
-    const startOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
-    const endOfMonth = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0);
-
-    // Načtení transakcí pro aktuální měsíc
-    const transactions = await Transaction.findAll({
+    // Načíst transakce relevantní pro aktuální měsíc
+    const relevantTransactions = await Transaction.findAll({
       where: {
         userId,
-        createdAt: {
-          [Op.gte]: startOfMonth,
-          [Op.lt]: endOfMonth,
+        date: {
+          [Op.between]: [oneMonthAgo, now], // Transakce za poslední měsíc
         },
       },
     });
 
-    if (!transactions || transactions.length === 0) {
-      console.error('Žádné transakce nebyly nalezeny.');
-      return res.status(404).json({ message: 'Žádné transakce nebyly nalezeny.' });
-    }
-
-    console.log('Načtené transakce:', transactions);
-
-    // Výpočet příjmů a výdajů
-    let income = 0;
-    let expenses = 0;
-
-    transactions.forEach((transaction) => {
-      if (transaction.amount > 0) {
-        income += parseFloat(transaction.amount);
-      } else {
-        expenses += parseFloat(transaction.amount);
-      }
+    // Mazání nepravidelných transakcí starších než jeden měsíc
+    await Transaction.destroy({
+      where: {
+        userId,
+        recurring: false,
+        date: {
+          [Op.lt]: oneMonthAgo, // Starší než jeden měsíc
+        },
+      },
     });
 
-    // Odeslání odpovědi
-    res.status(200).json({ income, expenses });
+    // Pravidelné transakce: Aktualizace nebo ignorování
+    const recurringTransactions = await Transaction.findAll({
+      where: {
+        userId,
+        recurring: true,
+        date: {
+          [Op.lte]: now, // Starší nebo rovno dnešnímu dni
+        },
+      },
+    });
+
+    for (const transaction of recurringTransactions) {
+      if (new Date(transaction.updatedAt) < oneMonthAgo) {
+        // Pokud pravidelná transakce nebyla započítána, aktualizujeme `updatedAt`
+        const updatedDate = new Date(transaction.updatedAt);
+        updatedDate.setMonth(now.getMonth()); // Nastavíme aktuální měsíc
+        updatedDate.setFullYear(now.getFullYear()); // Nastavíme aktuální rok
+
+        transaction.updatedAt = updatedDate;
+        transaction.date = updatedDate; // Aktualizujeme datum na dnešní
+        await transaction.save(); // Uložíme aktualizaci
+      }
+    }
+
+    // Ignorovat budoucí transakce (už je nebudeme počítat)
+    const validTransactions = relevantTransactions.filter(transaction => {
+      return transaction.date <= now;
+    });
+
+    const income = validTransactions
+      .filter(t => t.amount > 0)
+      .reduce((sum, t) => sum + (parseFloat(t.amount) || 0), 0);
+
+    const expenses = validTransactions
+      .filter(t => t.amount < 0)
+      .reduce((sum, t) => sum + (parseFloat(t.amount) || 0), 0);
+
+    const formattedIncome = parseFloat(income.toFixed(2));
+    const formattedExpenses = parseFloat(expenses.toFixed(2));
+
+    res.status(200).json({
+      income: formattedIncome, 
+      expenses: formattedExpenses
+    });
   } catch (error) {
-    console.error('Chyba při získávání měsíčního přehledu:', error);
+    console.error('Error while getting monthly summary:', error);
     res.status(500).json({ message: 'Chyba při získávání měsíčního přehledu.' });
   }
 };
