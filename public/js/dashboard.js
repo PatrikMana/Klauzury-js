@@ -5,9 +5,8 @@ function formatNumber(number) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  calculateMonthSummary();
-  loadAccountData();
   loadUserProfile();
+  calculateMonthSummary();
 });
 
 // Funkce pro vložení alertu do seznamu
@@ -140,6 +139,7 @@ async function loadUserProfile() {
 
     const data = await response.json();
     updateUserName(data.username); // Funkce pro zobrazení jména
+    
   } catch (error) {
     console.error('Chyba při načítání profilu:', error);
   }
@@ -310,6 +310,7 @@ async function calculateMonthSummary() {
     const summary = await response.json();
     const totalAmount = summary.income + summary.expenses; // Součet příjmů a výdajů
     document.getElementById('dashboard-month-amount').textContent = (totalAmount >= 0 ? '+ ' : '- ') + formatNumber(Math.abs(totalAmount)) + ' Kč';
+    loadAccountData();
   } catch (error) {
     console.error('Chyba při výpočtu měsíčního přehledu:', error);
   }

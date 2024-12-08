@@ -29,60 +29,6 @@ exports.addTransaction = async (req, res) => {
   }
 };
 
-// Cron job pro opakující se transakce
-cron.schedule('0 0 1 * *', async () => {
-  try {
-    // Najdeme všechny pravidelné transakce (recurring: true)
-    const recurringTransactions = await Transaction.findAll({
-      where: { recurring: true },
-    });
-
-    // Pro každou pravidelnou transakci vytvoříme novou pro tento měsíc
-    recurringTransactions.forEach(async (transaction) => {
-      // Vytvoříme novou transakci s příslušnými parametry
-      await Transaction.create({
-        userId: transaction.userId,
-        name: transaction.name,
-        amount: transaction.amount,
-        date: new Date(), // Nové datum pro tento měsíc
-        recurring: true,  // Oznacujeme jako pravidelnou
-        createdAt: new Date(),
-      });
-
-      console.log(`Pravidelná transakce pro ${transaction.name} byla přidána.`);
-    });
-  } catch (error) {
-    console.error('Chyba při opakování transakcí:', error);
-  }
-});
-
-// Cron job pro opakující se transakce
-cron.schedule('0 0 1 * *', async () => {
-  try {
-    // Najdeme všechny pravidelné transakce (recurring: true)
-    const recurringTransactions = await Transaction.findAll({
-      where: { recurring: true },
-    });
-
-    // Pro každou pravidelnou transakci vytvoříme novou pro tento měsíc
-    recurringTransactions.forEach(async (transaction) => {
-      // Vytvoříme novou transakci s příslušnými parametry
-      await Transaction.create({
-        userId: transaction.userId,
-        name: transaction.name,
-        amount: transaction.amount,
-        date: new Date(), // Nové datum pro tento měsíc
-        recurring: true,  // Oznacujeme jako pravidelnou
-        createdAt: new Date(),
-      });
-
-      console.log(`Pravidelná transakce pro ${transaction.name} byla přidána.`);
-    });
-  } catch (error) {
-    console.error('Chyba při opakování transakcí:', error);
-  }
-});
-
 exports.getTransactions = async (req, res) => {
   const userId = req.user.id;
   const now = new Date();

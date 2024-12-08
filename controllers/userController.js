@@ -81,6 +81,8 @@ exports.getUserBalance = async (req, res) => {
       await transaction.save(); // Uložíme změnu
     }
 
+    
+
     // Aktualizovat zůstatek uživatele, pokud jsou nezapočtené transakce
     if (totalUpdate !== 0) {
       const updatedBalance = parseFloat(user.accountBalance) + totalUpdate;
