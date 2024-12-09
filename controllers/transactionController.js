@@ -1,5 +1,4 @@
 const Transaction = require('../models/Transaction');
-const cron = require('node-cron');
 const { Op } = require('sequelize');
 
 // Funkce pro přidání nové transakce
