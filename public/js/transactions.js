@@ -1,5 +1,5 @@
 document.getElementById('add-transaction').addEventListener('click', () => {
-  document.getElementById('addTransactionPopup').style.display = 'flex';  // Otevřít popup
+  document.getElementById('addTransactionPopup').style.display = 'flex';
   document.getElementById('transaction-name').value = '';
   document.getElementById('transaction-amount').value = '';
   document.getElementById('transaction-date').value = '';
@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
   loadTransactionsSummaryBar();
 });
 
+// Formátování čísel
 function formatNumber(number) {
   if (number === null || number === undefined || isNaN(number)) return 'N/A';
   return Number(number).toLocaleString('cs-CZ');
@@ -24,7 +25,7 @@ document.getElementById("transaction-popup-cancel").addEventListener('click', ()
 async function checkAuthToken() {
   const token = localStorage.getItem('authToken');
   if (!token) {
-      window.location.href = '/login.html';  // Pokud token není přítomen, přesměrujeme na přihlášení
+      window.location.href = '/login.html';  
       return;
   }
 
@@ -49,7 +50,6 @@ async function checkAuthToken() {
   }
 }
 
-// Zavoláme tuto funkci při načítání stránky
 checkAuthToken();
 
 // Funkce pro odeslání nové transakce
@@ -58,7 +58,7 @@ document.getElementById('transaction-popup-confirm').addEventListener('click', a
   const amount = document.getElementById('transaction-amount').value;
   const date = document.getElementById('transaction-date').value;
   const isRecurring = document.getElementById('transaction-recurring').checked;
-  const type = document.querySelector('input[name="transactionType"]:checked').value; // Výdaj nebo Příjem
+  const type = document.querySelector('input[name="transactionType"]:checked').value;
 
   const adjustedAmount = type === 'expense' ? -Math.abs(amount) : Math.abs(amount);
 
@@ -94,10 +94,8 @@ document.getElementById('transaction-popup-confirm').addEventListener('click', a
       date.value = '';
       isRecurring.checked = false;
 
-      // Po úspěšném odeslání transakce
-      document.getElementById('addTransactionPopup').style.display = 'none'; // Zavřít popup
+      document.getElementById('addTransactionPopup').style.display = 'none';
 
-      // Zobrazíme alert okno s úspěšným přidáním
       alert('Transakce byla úspěšně přidána!');
       
   } catch (error) {
@@ -165,7 +163,7 @@ async function loadTransactionsSummaryBar() {
     const { income, expenses } = await response.json();
 
     // Výpočet procent příjmů a výdajů
-    const total = income + Math.abs(expenses); // Celkový objem příjmů a výdajů
+    const total = income + Math.abs(expenses);
     const incomePercentage = total === 0 ? 50 : (income / total) * 100;
     const expensesPercentage = total === 0 ? 50 : (Math.abs(expenses) / total) * 100;
 
@@ -229,7 +227,7 @@ async function loadUserProfile() {
     }
 
     const data = await response.json();
-    updateUserName(data.username); // Funkce pro zobrazení jména
+    updateUserName(data.username);
   } catch (error) {
     console.error('Chyba při načítání profilu:', error);
   }
@@ -239,12 +237,12 @@ async function loadUserProfile() {
 function updateUserName(username) {
   const usernameElement = document.getElementById('username');
   if (usernameElement) {
-    usernameElement.textContent = username; // Defaultní jméno, pokud není k dispozici
+    usernameElement.textContent = username;
   }
 }
 
-let offset = 0; // Track the current offset for paginated requests
-const limit = 6; // Number of transactions to fetch at a time
+let offset = 0;
+const limit = 6;
 
 // Function to append transactions to the table
 function appendTransactions(transactions) {
@@ -338,7 +336,7 @@ async function refreshTransactions() {
     loadSummary()
     appendTransactions(transactions);
 
-    offset = transactions.length; // Reset offset na počet načtených transakcí
+    offset = transactions.length;
 
     // Kontrola tlačítka "Zobrazit další"
     if (offset >= (data.totalTransactions)) {

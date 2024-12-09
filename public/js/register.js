@@ -1,3 +1,4 @@
+// Přidání event listeneru na formulář pro registraci
 document.getElementById('registerForm').addEventListener('submit', async function (e) {
   e.preventDefault();
 
@@ -7,12 +8,12 @@ document.getElementById('registerForm').addEventListener('submit', async functio
 
   errorMessage.textContent = '';
 
-  // Kontrola délky hesla
   if (password.length < 8) {
     errorMessage.textContent = 'Heslo musí obsahovat alespoň 8 znaků.';
-    return; // Zastavíme odesílání formuláře
+    return;
   }
 
+  // Odeslání POST požadavku na server
   try {
     const response = await fetch('/api/users/register', {
       method: 'POST',

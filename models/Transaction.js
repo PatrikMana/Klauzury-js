@@ -1,6 +1,7 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database');  // Správně importuj sequelize
+const sequelize = require('../config/database');
 
+// Definice modelu transakce
 const Transaction = sequelize.define('Transaction', {
   id: {
     type: DataTypes.INTEGER,

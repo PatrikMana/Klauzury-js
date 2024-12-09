@@ -1,15 +1,18 @@
 // Formátování čísel
+// Vrátí 'N/A' pokud je hodnota neplatná, jinak formátuje číslo podle českých zvyklostí
 function formatNumber(number) {
   if (number === null || number === undefined || isNaN(number)) return 'N/A';
   return Number(number).toLocaleString('cs-CZ');
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  loadUserProfile();
-  calculateMonthSummary();
+  loadUserProfile(); // Načte profil uživatele po načtení stránky
+  calculateMonthSummary(); // Vypočítá měsíční souhrn transakcí po načtení stránky
 });
 
 // Funkce pro vložení alertu do seznamu
+// Vyčistíme seznam, pokud obsahuje výchozí zprávu
+// Vytvoříme nový textový prvek seznamu a přidáme ho do seznamu
 function insertAlertAsText(message) {
   const alertList = document.querySelector('.notifications-box ul');
 
@@ -18,21 +21,19 @@ function insertAlertAsText(message) {
     return;
   }
 
-  // Odstraníme výchozí zprávu, pokud existuje
   const defaultAlert = alertList.querySelector('li');
   if (defaultAlert && defaultAlert.textContent === 'nemáte žádné upozornění') {
     alertList.innerHTML = '';
   }
 
-  // Vytvoříme nový textový prvek seznamu
   const alertItem = document.createElement('li');
   alertItem.textContent = message;
-
-  // Přidáme prvek do seznamu
   alertList.appendChild(alertItem);
 }
 
 // Funkce pro načtení alertů z API a jejich zobrazení
+// Přesměrování na přihlašovací stránku, pokud není token
+// Načítá alerty z API a zobrazuje je v seznamu
 async function fetchAndDisplayAlerts() {
   const token = localStorage.getItem('authToken');
   if (!token) {
@@ -55,13 +56,11 @@ async function fetchAndDisplayAlerts() {
 
     const alerts = await response.json();
 
-    // Pokud nejsou žádné alerty, zobrazíme výchozí zprávu
     if (alerts.length === 0) {
       insertAlertAsText('nemáte žádné upozornění');
       return;
     }
 
-    // Přidáme každý alert do seznamu
     alerts.forEach(alert => {
       insertAlertAsText(alert.message);
     });
@@ -72,6 +71,8 @@ async function fetchAndDisplayAlerts() {
 }
 
 // Načtení dat z databáze
+// Přesměrování na přihlašovací stránku, pokud není token
+// Načítá data účtu z API a aktualizuje stránku
 async function loadAccountData() {
   const token = localStorage.getItem('authToken');
   if (!token) {
@@ -109,6 +110,8 @@ async function loadAccountData() {
 }
 
 // Funkce pro načtení jména uživatele a aktualizaci UI
+// Přesměrování na přihlašovací stránku, pokud není token
+// Načítá profil uživatele z API a aktualizuje UI
 async function loadUserProfile() {
   const token = localStorage.getItem('authToken');
   if (!token) {
@@ -154,15 +157,15 @@ function updateUserName(username) {
 }
 
 // Funkce pro nastavení progress baru
+// Aktualizuje šířku a text progress baru podle zůstatku a cíle
+// Fetch příjmů a výdajů a aktualizace příjmového a výdajového progress baru
 async function updateProgressBars(accountBalance, accountGoal) {
   try {
-    // 1. Aktualizace hlavního progress baru (zůstatek vs. cíl)
     const progressBar = document.getElementById('progress');
     const progressText = document.getElementById('progress-text');
     const progressPercent = accountGoal > 0 ? (accountBalance / accountGoal) * 100 : 0;
 
     if (progressPercent < 10) {
-      // Skryjeme progress bar a text, pokud je procento menší než 0
       if (progressBar) {
         progressBar.style.display = 'none';
       }
@@ -180,7 +183,6 @@ async function updateProgressBars(accountBalance, accountGoal) {
       progressText.textContent = `${Math.round(progressPercent)}%`;
     }
 
-    // 2. Fetch příjmů a výdajů
     const token = localStorage.getItem('authToken');
     if (!token) {
       window.location.href = '/login.html';
@@ -201,12 +203,10 @@ async function updateProgressBars(accountBalance, accountGoal) {
 
     const { income, expenses } = await response.json();
 
-    // 3. Výpočet procent pro příjmy/výdaje
-    const total = income + Math.abs(expenses); // Celkový objem příjmů a výdajů
+    const total = income + Math.abs(expenses);
     const incomePercentage = total === 0 ? 50 : (income / total) * 100;
     const expensesPercentage = total === 0 ? 50 : (Math.abs(expenses) / total) * 100;
 
-    // 4. Aktualizace příjmového a výdajového progress baru
     const incomeBar = document.querySelector('.income-bar');
     const expensesBar = document.querySelector('.expenses-bar');
 
@@ -214,7 +214,6 @@ async function updateProgressBars(accountBalance, accountGoal) {
       incomeBar.style.width = `${incomePercentage}%`;
       expensesBar.style.width = `${expensesPercentage}%`;
 
-      // Aktualizace textu uvnitř progress baru
       incomeBar.querySelector('.progress-text').textContent = `${incomePercentage.toFixed(0)}%`;
       expensesBar.querySelector('.progress-text').textContent = `${expensesPercentage.toFixed(0)}%`;
 
@@ -231,6 +230,8 @@ async function updateProgressBars(accountBalance, accountGoal) {
 }
 
 // Aktualizace dat na stránce
+// Aktualizuje zobrazení zůstatku a cíle na stránce
+// Aktualizuje progress bar
 function updatePageWithAccountData({ accountBalance, accountGoal }) {
   document.getElementById('balance-amount').textContent = formatNumber(accountBalance) + " Kč" || 'N/A';
   document.getElementById('balance-goal').textContent = formatNumber(accountGoal) + " Kč" || 'N/A';
@@ -243,6 +244,8 @@ function updatePageWithAccountData({ accountBalance, accountGoal }) {
 }
 
 // Odeslání formuláře (uložení dat do databáze)
+// Přesměrování na přihlašovací stránku, pokud není token
+// Odesílá data účtu do API a aktualizuje stránku
 document.getElementById('accountForm').addEventListener('submit', async (e) => {
   e.preventDefault();
 
@@ -257,12 +260,11 @@ document.getElementById('accountForm').addEventListener('submit', async (e) => {
     document.getElementById('accountForm').appendChild(errorContainer);
   }
 
-  // Kontrola, zda accountGoal není záporný
   if (accountGoal <= 0) {
     document.getElementById('error-message').textContent = 'Cílová částka nemůže být záporná.';
-    return; // Zastavíme odesílání formuláře
+    return;
   } else {
-    document.getElementById('error-message').textContent = ''; // Vymažeme chybovou zprávu, pokud vše projde
+    document.getElementById('error-message').textContent = '';
   }
 
   const token = localStorage.getItem('authToken');
@@ -296,12 +298,15 @@ document.getElementById('accountForm').addEventListener('submit', async (e) => {
 });
 
 // Odhlášení uživatele
+// Odstraní token z localStorage a přesměruje na přihlašovací stránku
 document.getElementById('logout').addEventListener('click', () => {
   localStorage.removeItem('authToken');
   window.location.href = '/login.html';
 });
 
 // Funkce pro výpočet a zobrazení součtu transakcí na dashboardu
+// Přesměrování na přihlašovací stránku, pokud není token
+// Načítá souhrn transakcí z API a zobrazuje je na stránce
 async function calculateMonthSummary() {
   const token = localStorage.getItem('authToken');
   if (!token) {
@@ -325,11 +330,9 @@ async function calculateMonthSummary() {
     const summary = await response.json();
     const totalAmount = summary.income + summary.expenses; // Součet příjmů a výdajů
     
-    // Nastavíme hodnotu pro zůstatek v dashboardu
     document.getElementById('dashboard-month-amount').textContent = 
       (totalAmount >= 0 ? '+ ' : '- ') + formatNumber(Math.abs(totalAmount)) + ' Kč';
 
-    // Generování zprávy pro měsíční přehled
     let monthMessage = '';
     if (totalAmount > 0) {
       monthMessage = `Za minulý měsíc jste ${formatNumber(totalAmount)} Kč v plusu, jen tak dál!`;
@@ -339,7 +342,6 @@ async function calculateMonthSummary() {
       monthMessage = 'Za minulý měsíc jste byli na nule, zlepšete svůj rozpočet!';
     }
 
-    // Zobrazíme zprávu na stránce v elementu .month-info
     const monthInfoElement = document.querySelector('.month-info');
     if (monthInfoElement) {
       monthInfoElement.textContent = monthMessage;

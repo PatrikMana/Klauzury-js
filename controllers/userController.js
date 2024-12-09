@@ -3,6 +3,7 @@ const Transaction = require('../models/Transaction');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
+// Funkce pro registraci nového uživatele
 exports.registerUser = async (req, res) => {
   try {
     const { username, password } = req.body;
@@ -26,6 +27,7 @@ exports.registerUser = async (req, res) => {
   }
 };
 
+// Funkce pro přihlášení uživatele
 exports.loginUser = async (req, res) => {
   try {
     const { username, password } = req.body;
@@ -49,6 +51,7 @@ exports.loginUser = async (req, res) => {
   }
 };
 
+// Funkce pro získání zůstatku uživatele
 exports.getUserBalance = async (req, res) => {
   try {
     if (!req.user) {
@@ -57,14 +60,12 @@ exports.getUserBalance = async (req, res) => {
 
     const userId = req.user.id;
 
-    // Načtení uživatele z databáze
     const user = await User.findByPk(userId);
 
     if (!user) {
       return res.status(404).json({ message: 'Uživatel nenalezen.' });
     }
 
-    // Načíst nezapočtené transakce
     const uncreditedTransactions = await Transaction.findAll({
       where: {
         userId,
@@ -74,23 +75,18 @@ exports.getUserBalance = async (req, res) => {
 
     let totalUpdate = 0;
 
-    // Zpracovat nezapočtené transakce
     for (const transaction of uncreditedTransactions) {
-      totalUpdate += parseFloat(transaction.amount); // Přičteme hodnotu transakce
-      transaction.credited = true; // Nastavíme jako započtenou
-      await transaction.save(); // Uložíme změnu
+      totalUpdate += parseFloat(transaction.amount);
+      transaction.credited = true;
+      await transaction.save();
     }
 
-    
-
-    // Aktualizovat zůstatek uživatele, pokud jsou nezapočtené transakce
     if (totalUpdate !== 0) {
       const updatedBalance = parseFloat(user.accountBalance) + totalUpdate;
-      user.accountBalance = parseFloat(updatedBalance.toFixed(2)); // Zaokrouhlíme na dvě desetinná místa
-      await user.save(); // Uložíme aktualizovaný zůstatek
+      user.accountBalance = parseFloat(updatedBalance.toFixed(2));
+      await user.save();
     }
 
-    // Vrátit aktuální zůstatek a cíl uživatele
     res.status(200).json({
       accountBalance: user.accountBalance,
       accountGoal: user.accountGoal,
@@ -101,22 +97,21 @@ exports.getUserBalance = async (req, res) => {
   }
 };
 
+// Funkce pro aktualizaci zůstatku uživatele
 exports.updateBalance = async (req, res) => {
   try {
-    const userId = req.user.id; // Předpokládáme, že middleware verifyToken přidává uživatelské ID do req.user
+    const userId = req.user.id;
     const { accountBalance, accountGoal } = req.body;
 
     if (!accountBalance || !accountGoal) {
       return res.status(400).json({ message: 'Vyplňte zůstatek a cílovou částku.' });
     }
 
-    // Aktualizace dat v databázi
     await User.update(
       { accountBalance, accountGoal },
       { where: { id: userId } }
     );
 
-    // Vrácení aktualizovaných dat
     const updatedUser = await User.findByPk(userId);
     res.status(200).json({
       accountBalance: updatedUser.accountBalance,
@@ -128,11 +123,12 @@ exports.updateBalance = async (req, res) => {
   }
 };
 
+// Funkce pro získání profilu uživatele
 exports.getProfile = async (req, res) => {
   try {
-    const userId = req.user.id; // Uživatelské ID z tokenu
+    const userId = req.user.id;
     const user = await User.findByPk(userId, {
-      attributes: ['id', 'username'], // Vracíme potřebné údaje
+      attributes: ['id', 'username'],
     });
 
     if (!user) {

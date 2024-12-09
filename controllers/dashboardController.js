@@ -1,6 +1,7 @@
 const Transaction = require('../models/Transaction');
 const { Op } = require('sequelize');
 
+// Funkce pro získání měsíčního přehledu transakcí
 exports.getMonthlySummary = async (req, res) => {
   const userId = req.user.id;
   const now = new Date();
@@ -13,7 +14,7 @@ exports.getMonthlySummary = async (req, res) => {
       where: {
         userId,
         date: {
-          [Op.between]: [oneMonthAgo, now], // Transakce za poslední měsíc
+          [Op.between]: [oneMonthAgo, now],
         },
       },
     });
@@ -24,7 +25,7 @@ exports.getMonthlySummary = async (req, res) => {
         userId,
         recurring: false,
         date: {
-          [Op.lt]: oneMonthAgo, // Starší než jeden měsíc
+          [Op.lt]: oneMonthAgo,
         },
       },
     });
@@ -35,26 +36,26 @@ exports.getMonthlySummary = async (req, res) => {
         userId,
         recurring: true,
         date: {
-          [Op.lte]: now, // Starší nebo rovno dnešnímu dni
+          [Op.lte]: now,
         },
       },
     });
 
     for (const transaction of recurringTransactions) {
       if (new Date(transaction.updatedAt) < oneMonthAgo) {
-        // Pokud pravidelná transakce nebyla započítána, aktualizujeme `updatedAt`
+        // Aktualizace `updatedAt` a `date` pro pravidelné transakce, které nebyly započítány
         const updatedDate = new Date(transaction.updatedAt);
-        updatedDate.setMonth(now.getMonth()); // Nastavíme aktuální měsíc
-        updatedDate.setFullYear(now.getFullYear()); // Nastavíme aktuální rok
+        updatedDate.setMonth(now.getMonth());
+        updatedDate.setFullYear(now.getFullYear());
 
         transaction.updatedAt = updatedDate;
-        transaction.date = updatedDate; // Aktualizujeme datum na dnešní
-        transaction.credited = false; // Nastavíme jako nezapočtenou
-        await transaction.save(); // Uložíme aktualizaci
+        transaction.date = updatedDate;
+        transaction.credited = false;
+        await transaction.save();
       }
     }
 
-    // Ignorovat budoucí transakce (už je nebudeme počítat)
+    // Ignorovat budoucí transakce
     const validTransactions = relevantTransactions.filter(transaction => {
       return transaction.date <= now;
     });

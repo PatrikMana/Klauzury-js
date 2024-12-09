@@ -1,33 +1,34 @@
 const User = require('../models/User');
 const Transaction = require('../models/Transaction');
 
+// Funkce pro získání alertů pro uživatele
 exports.getAlerts = async (req, res) => {
   try {
     const userId = req.user.id;
-    const user = await User.findByPk(userId);
+    const user = await User.findByPk(userId); 
     const transactions = await Transaction.findAll({ where: { userId } });
 
     if (!user) {
-      return res.status(404).json({ message: 'Uživatel nenalezen.' });
+      return res.status(404).json({ message: 'Uživatel nenalezen.' }); 
     }
 
     const alerts = [];
 
-    // Nízký zůstatek
+    // Kontrola nízkého zůstatku
     if (user.accountBalance < 100) {
       alerts.push({
         message: 'Váš zůstatek je pod 100 Kč. Doporučujeme zkontrolovat výdaje.',
       });
     }
 
-    // Záporný zůstatek
+    // Kontrola záporného zůstatku
     if (user.accountBalance < 0) {
       alerts.push({
         message: 'Váš zůstatek je záporný. Doplňte prostředky.',
       });
     }
 
-    // Měsíční záporný zůstatek
+    // Kontrola měsíčního záporného zůstatku
     const monthlyExpenses = transactions
       .filter(t => t.amount < 0 && isCurrentMonth(t.date))
       .reduce((sum, t) => sum + Math.abs(t.amount), 0);
@@ -42,14 +43,14 @@ exports.getAlerts = async (req, res) => {
       });
     }
 
-    // Splněný cíl
+    // Kontrola splnění cíle
     if (user.accountBalance >= user.accountGoal) {
       alerts.push({
         message: 'Gratulujeme! Dosáhli jste svého cíle.',
       });
     }
 
-    // Nastávající transakce
+    // Kontrola nastávajících transakcí
     const upcomingTransactions = transactions.filter(t => {
       const transactionDate = new Date(t.date);
       const today = new Date();

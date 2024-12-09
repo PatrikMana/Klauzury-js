@@ -1,11 +1,11 @@
-const Transaction = require('../models/Transaction'); // Ujisti se, že správně importuješ model
-const cron = require('node-cron'); // Naimportujeme node-cron
+const Transaction = require('../models/Transaction');
+const cron = require('node-cron');
 const { Op } = require('sequelize');
 
 // Funkce pro přidání nové transakce
 exports.addTransaction = async (req, res) => {
   const { name, amount, date, isRecurring, type } = req.body;
-  const userId = req.user.id; // Získáme uživatelské ID z tokenu
+  const userId = req.user.id;
 
   try {
     const newTransaction = await Transaction.create({
@@ -29,6 +29,7 @@ exports.addTransaction = async (req, res) => {
   }
 };
 
+// Funkce pro získání transakcí za aktuální měsíc
 exports.getTransactions = async (req, res) => {
   const userId = req.user.id;
   const now = new Date();
@@ -41,10 +42,10 @@ exports.getTransactions = async (req, res) => {
       where: {
         userId,
         date: {
-          [Op.between]: [oneMonthAgo, now], // Pouze transakce mezi těmito daty
+          [Op.between]: [oneMonthAgo, now],
         },
       },
-      order: [['updatedAt', 'DESC']], // Seřazení od nejnovějších
+      order: [['updatedAt', 'DESC']],
       offset: parseInt(req.query.offset, 10) || 0,
       limit: parseInt(req.query.limit, 10) || 6,
     });
@@ -54,7 +55,7 @@ exports.getTransactions = async (req, res) => {
       where: {
         userId,
         date: {
-          [Op.between]: [oneMonthAgo, now], // Stejný filtr pro relevantní transakce
+          [Op.between]: [oneMonthAgo, now],
         },
       },
     });
