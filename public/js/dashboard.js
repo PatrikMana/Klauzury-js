@@ -230,7 +230,6 @@ async function updateProgressBars(accountBalance, accountGoal) {
   }
 }
 
-
 // Aktualizace dat na stránce
 function updatePageWithAccountData({ accountBalance, accountGoal }) {
   document.getElementById('balance-amount').textContent = formatNumber(accountBalance) + " Kč" || 'N/A';
@@ -247,8 +246,24 @@ function updatePageWithAccountData({ accountBalance, accountGoal }) {
 document.getElementById('accountForm').addEventListener('submit', async (e) => {
   e.preventDefault();
 
-  const accountBalance = document.getElementById('accountBalance').value;
-  const accountGoal = document.getElementById('accountGoal').value;
+  const accountBalance = parseFloat(document.getElementById('accountBalance').value);
+  const accountGoal = parseFloat(document.getElementById('accountGoal').value);
+  const errorMessage = document.getElementById('error-message'); // Přidáme pole pro zobrazení chybové zprávy
+
+  if (!errorMessage) {
+    const errorContainer = document.createElement('p');
+    errorContainer.id = 'error-message';
+    errorContainer.style.color = 'red';
+    document.getElementById('accountForm').appendChild(errorContainer);
+  }
+
+  // Kontrola, zda accountGoal není záporný
+  if (accountGoal <= 0) {
+    document.getElementById('error-message').textContent = 'Cílová částka nemůže být záporná.';
+    return; // Zastavíme odesílání formuláře
+  } else {
+    document.getElementById('error-message').textContent = ''; // Vymažeme chybovou zprávu, pokud vše projde
+  }
 
   const token = localStorage.getItem('authToken');
   if (!token) {

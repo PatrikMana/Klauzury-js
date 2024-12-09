@@ -670,6 +670,11 @@ h2 {
     color: var(--color-secondary);
 }
 
+.log-to-reg, .log-to-reg a {
+    text-align: center;
+    color: var(--color-text-light);
+}
+
 #registerButton {
     background-color: var(--color-secondary);
     color: var(--color-white);
